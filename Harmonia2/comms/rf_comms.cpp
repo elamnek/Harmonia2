@@ -8,12 +8,12 @@
 #define serialRF Serial1
 
 String m_strRemoteCommand; //string to be captured from serial port
-String m_strRemoteParam; //numeric parameter
+String m_strRemoteParam; //parameter (s)
 
 void init_rf_comms() {
 
-	//data from HarmoniaRemote (RF)
-	serialRF.begin(9600); //9600
+	//data from Harmonia2Remote (RF)
+	serialRF.begin(9600);
 }
 
 void send_rf_comm(String strMsg) {

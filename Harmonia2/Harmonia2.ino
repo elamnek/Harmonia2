@@ -4,10 +4,12 @@
  Author:	eugen
 */
 
-//harmonia libraries
+
 #include <WireKinetis.h>
 #include <WireIMXRT.h>
 #include <Wire.h>
+
+//harmonia libraries
 #include "sensors\water_sensors.h"
 #include "comms\rf_comms.h"
 
@@ -20,20 +22,21 @@ String  get_state() {
 	case MANUAL: return "MANUAL";
 	case STATIC_TRIM: return "STATIC_TRIM";	
 	case RUN: return "RUN";
-	case ALARM: return "ALARM";
-	}
+	case ALARM: return "ALARM";}
+	return "";
 }
 
 void setup() {
+	Serial.begin(9600);
 
 }
 
 void loop() {
   
 	//check leak sensors and override any state that has been set
-	if (fwd_leak_detected() == 1 || aft_leak_detected() == 1) {
+	/*if (fwd_leak_detected() == 1 || aft_leak_detected() == 1) {
 		state = ALARM;
-	}
+	}*/
 
 	//check for new commands coming from desktop remote
 	check_rf_comms();
