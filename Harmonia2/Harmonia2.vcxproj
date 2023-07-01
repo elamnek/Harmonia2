@@ -80,10 +80,12 @@
     <TargetOSAndVersion>Arduino</TargetOSAndVersion>
   </PropertyGroup>
   <ItemGroup>
+    <ClCompile Include="comms\rf_comms.cpp" />
     <ClCompile Include="Harmonia2.ino">
       <FileType>CppCode</FileType>
       <DeploymentContent>true</DeploymentContent>
     </ClCompile>
+    <ClCompile Include="sensors\water_sensors.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\arduino folders read me.txt">
@@ -93,20 +95,22 @@
     <ProjectCapability Include="VisualMicro" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="comms\rf_comms.h" />
+    <ClInclude Include="sensors\water_sensors.h" />
     <ClInclude Include="__vm\.Harmonia2.vsarduino.h" />
   </ItemGroup>
   <PropertyGroup>
     <DebuggerFlavor>VisualMicroDebugger</DebuggerFlavor>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(ProjectDir)..\..\..\..\..\..\..\\Users\\eugen\\AppData\\Local\\arduino15\\packages\\teensy\\hardware\\avr\\1.58.1\\cores\\teensy4;$(ProjectDir)..\..\..\..\..\..\..\users\eugen\appdata\local\arduino15\packages\teensy\tools\teensy-compile\11.3.1\arm\arm-none-eabi\include\c++\11.3.1;$(ProjectDir)..\..\..\..\..\..\..\users\eugen\appdata\local\arduino15\packages\teensy\tools\teensy-compile\11.3.1\arm\arm-none-eabi\include\c++\11.3.1\arm-none-eabi\thumb\v7e-m+dp\hard;$(ProjectDir)..\..\..\..\..\..\..\users\eugen\appdata\local\arduino15\packages\teensy\tools\teensy-compile\11.3.1\arm\arm-none-eabi\include\c++\11.3.1\backward;$(ProjectDir)..\..\..\..\..\..\..\users\eugen\appdata\local\arduino15\packages\teensy\tools\teensy-compile\11.3.1\arm\lib\gcc\arm-none-eabi\11.3.1\include;$(ProjectDir)..\..\..\..\..\..\..\users\eugen\appdata\local\arduino15\packages\teensy\tools\teensy-compile\11.3.1\arm\lib\gcc\arm-none-eabi\11.3.1\include-fixed;$(ProjectDir)..\..\..\..\..\..\..\users\eugen\appdata\local\arduino15\packages\teensy\tools\teensy-compile\11.3.1\arm\arm-none-eabi\include</IncludePath>
+    <IncludePath>$(ProjectDir)..\..\..\..\..\..\..\\Users\\eugen\\AppData\\Local\\arduino15\\packages\\teensy\\hardware\\avr\\1.58.1\\cores\\teensy4;$(ProjectDir)..\..\..\..\..\..\..\users\eugen\appdata\local\arduino15\packages\teensy\tools\teensy-compile\11.3.1\arm\arm-none-eabi\include\c++\11.3.1;$(ProjectDir)..\..\..\..\..\..\..\users\eugen\appdata\local\arduino15\packages\teensy\tools\teensy-compile\11.3.1\arm\arm-none-eabi\include\c++\11.3.1\arm-none-eabi\thumb\v7e-m+dp\hard;$(ProjectDir)..\..\..\..\..\..\..\users\eugen\appdata\local\arduino15\packages\teensy\tools\teensy-compile\11.3.1\arm\arm-none-eabi\include\c++\11.3.1\backward;$(ProjectDir)..\..\..\..\..\..\..\users\eugen\appdata\local\arduino15\packages\teensy\tools\teensy-compile\11.3.1\arm\lib\gcc\arm-none-eabi\11.3.1\include;$(ProjectDir)..\..\..\..\..\..\..\users\eugen\appdata\local\arduino15\packages\teensy\tools\teensy-compile\11.3.1\arm\lib\gcc\arm-none-eabi\11.3.1\include-fixed;$(ProjectDir)..\..\..\..\..\..\..\users\eugen\appdata\local\arduino15\packages\teensy\tools\teensy-compile\11.3.1\arm\arm-none-eabi\include;$(ProjectDir)..\..\..\..\..\..\..\Users\eugen\AppData\Local\arduino15\packages\teensy\hardware\avr\1.58.1\libraries\Wire;$(ProjectDir)..\..\..\..\..\..\..\Users\eugen\AppData\Local\arduino15\packages\teensy\hardware\avr\1.58.1\libraries\Wire\utility</IncludePath>
     <RemoteCCompileToolExe>$(ProjectDir)..\..\..\..\..\..\..\\Users\\eugen\\AppData\\Local\\arduino15\\packages\\teensy\\tools\\teensy-compile\\11.3.1\arm\bin\arm-none-eabi-g++</RemoteCCompileToolExe>
     <RemoteCppCompileToolExe>$(ProjectDir)..\..\..\..\..\..\..\\Users\\eugen\\AppData\\Local\\arduino15\\packages\\teensy\\tools\\teensy-compile\\11.3.1\arm\bin\arm-none-eabi-g++</RemoteCppCompileToolExe>
     <ValidateArchitecture>false</ValidateArchitecture>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>$(ProjectDir)..\..\..\..\..\..\..\\Users\\eugen\\AppData\\Local\\arduino15\\packages\\teensy\\hardware\\avr\\1.58.1\\cores\\teensy4;$(ProjectDir)..\..\..\..\..\..\..\users\eugen\appdata\local\arduino15\packages\teensy\tools\teensy-compile\11.3.1\arm\arm-none-eabi\include\c++\11.3.1;$(ProjectDir)..\..\..\..\..\..\..\users\eugen\appdata\local\arduino15\packages\teensy\tools\teensy-compile\11.3.1\arm\arm-none-eabi\include\c++\11.3.1\arm-none-eabi\thumb\v7e-m+dp\hard;$(ProjectDir)..\..\..\..\..\..\..\users\eugen\appdata\local\arduino15\packages\teensy\tools\teensy-compile\11.3.1\arm\arm-none-eabi\include\c++\11.3.1\backward;$(ProjectDir)..\..\..\..\..\..\..\users\eugen\appdata\local\arduino15\packages\teensy\tools\teensy-compile\11.3.1\arm\lib\gcc\arm-none-eabi\11.3.1\include;$(ProjectDir)..\..\..\..\..\..\..\users\eugen\appdata\local\arduino15\packages\teensy\tools\teensy-compile\11.3.1\arm\lib\gcc\arm-none-eabi\11.3.1\include-fixed;$(ProjectDir)..\..\..\..\..\..\..\users\eugen\appdata\local\arduino15\packages\teensy\tools\teensy-compile\11.3.1\arm\arm-none-eabi\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)..\..\..\..\..\..\..\\Users\\eugen\\AppData\\Local\\arduino15\\packages\\teensy\\hardware\\avr\\1.58.1\\cores\\teensy4;$(ProjectDir)..\..\..\..\..\..\..\users\eugen\appdata\local\arduino15\packages\teensy\tools\teensy-compile\11.3.1\arm\arm-none-eabi\include\c++\11.3.1;$(ProjectDir)..\..\..\..\..\..\..\users\eugen\appdata\local\arduino15\packages\teensy\tools\teensy-compile\11.3.1\arm\arm-none-eabi\include\c++\11.3.1\arm-none-eabi\thumb\v7e-m+dp\hard;$(ProjectDir)..\..\..\..\..\..\..\users\eugen\appdata\local\arduino15\packages\teensy\tools\teensy-compile\11.3.1\arm\arm-none-eabi\include\c++\11.3.1\backward;$(ProjectDir)..\..\..\..\..\..\..\users\eugen\appdata\local\arduino15\packages\teensy\tools\teensy-compile\11.3.1\arm\lib\gcc\arm-none-eabi\11.3.1\include;$(ProjectDir)..\..\..\..\..\..\..\users\eugen\appdata\local\arduino15\packages\teensy\tools\teensy-compile\11.3.1\arm\lib\gcc\arm-none-eabi\11.3.1\include-fixed;$(ProjectDir)..\..\..\..\..\..\..\users\eugen\appdata\local\arduino15\packages\teensy\tools\teensy-compile\11.3.1\arm\arm-none-eabi\include;$(ProjectDir)..\..\..\..\..\..\..\Users\eugen\AppData\Local\arduino15\packages\teensy\hardware\avr\1.58.1\libraries\Wire;$(ProjectDir)..\..\..\..\..\..\..\Users\eugen\AppData\Local\arduino15\packages\teensy\hardware\avr\1.58.1\libraries\Wire\utility;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <GccToolChain>$(ProjectDir)..\..\..\..\..\..\..\\Users\\eugen\\AppData\\Local\\arduino15\\packages\\teensy\\tools\\teensy-compile\\11.3.1\arm\bin\arm-none-eabi-g++</GccToolChain>
       <CppLanguageStandard>gnu++1y</CppLanguageStandard>
       <CLanguageStandard>gnu11</CLanguageStandard>
@@ -115,7 +119,7 @@
       <ForcedIncludeFiles>$(ProjectDir)..\..\..\..\..\..\..\program files\microsoft visual studio\2022\community\common7\ide\extensions\lurodfxk.kwv\Micro Platforms\default\vm-intelli-pre.h;$(ProjectDir)..\..\..\..\..\..\..\Users\eugen\AppData\Local\Temp\VMBuilds\Harmonia2\teensy41\Debug\.vmintelli\f229e43a9fe0282fb516c4b9fc980922\vm-intelli-gcc-defines.h;$(ProjectDir)..\..\..\..\..\..\..\program files\microsoft visual studio\2022\community\common7\ide\extensions\lurodfxk.kwv\Micro Platforms\default\vm-intelli-post.h;$(ProjectDir)__vm\.Harmonia2.vsarduino.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
       <UndefineAllPreprocessorDefinitions>true</UndefineAllPreprocessorDefinitions>
       <IgnoreStandardIncludePath>true</IgnoreStandardIncludePath>
-      <PreprocessorDefinitions>_VMICRO_INTELLISENSE;__TEENSY4_imxrt1062__;__TEENSY4_IMXRT1062__;__IMXRT1062__;TEENSYDUINO=158;ARDUINO=108019;ARDUINO_TEENSY41;F_CPU=600000000;USB_SERIAL;LAYOUT_US_ENGLISH;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_VMICRO_INTELLISENSE;__TEENSY4_imxrt1062__;__TEENSY4_IMXRT1062__;_VMDEBUG=1;__IMXRT1062__;TEENSYDUINO=158;ARDUINO=108019;ARDUINO_TEENSY41;F_CPU=600000000;USB_SERIAL;LAYOUT_US_ENGLISH;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>xml;json;txt;rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="sensors">
+      <UniqueIdentifier>{5b7797c8-8566-4280-9d4f-e4792623dff1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="src\arduino folders read me.txt">
@@ -21,9 +24,21 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Harmonia2.ino" />
+    <ClCompile Include="sensors\water_sensors.cpp">
+      <Filter>sensors</Filter>
+    </ClCompile>
+    <ClCompile Include="comms\rf_comms.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="__vm\.Harmonia2.vsarduino.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sensors\water_sensors.h">
+      <Filter>sensors</Filter>
+    </ClInclude>
+    <ClInclude Include="comms\rf_comms.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
