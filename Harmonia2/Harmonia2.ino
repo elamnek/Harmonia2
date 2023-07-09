@@ -28,7 +28,9 @@ String  get_state() {
 
 void setup() {
 	Serial.begin(9600);
-
+	
+	init_rf_comms();
+	
 }
 
 void loop() {
@@ -37,12 +39,16 @@ void loop() {
 	/*if (fwd_leak_detected() == 1 || aft_leak_detected() == 1) {
 		state = ALARM;
 	}*/
+	Serial.println("tester");
+	//send_rf_comm("hello from teensy!!");
+	delay(1000);
 
 	//check for new commands coming from desktop remote
 	check_rf_comms();
 
 	//set state using commands from remote
 	String strRemoteCommand = get_remote_command();
+	send_rf_comm("remote command received: " + strRemoteCommand);
 	if (state == ALARM) {
 		//system in alarm state - can only be changed by command to go to idle state
 		if (strRemoteCommand == "IDLE") { state = IDLE; }	

@@ -5,7 +5,7 @@
 #include "rf_comms.h"
 
 //this serial will be used to communicate in 2 directions between the desktop software and sub
-#define serialRF Serial1
+#define serialRF Serial5
 
 String m_strRemoteCommand; //string to be captured from serial port
 String m_strRemoteParam; //parameter (s)
