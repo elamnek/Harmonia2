@@ -30,6 +30,12 @@
     <ClCompile Include="comms\rf_comms.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="sensors\temp_sensors.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="sensors\IMU.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="__vm\.Harmonia2.vsarduino.h">
@@ -39,6 +45,12 @@
       <Filter>sensors</Filter>
     </ClInclude>
     <ClInclude Include="comms\rf_comms.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sensors\temp_sensors.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sensors\IMU.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

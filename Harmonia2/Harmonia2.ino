@@ -1,7 +1,7 @@
 /*
  Name:		Harmonia2.ino
  Created:	7/1/2023 5:03:31 PM
- Author:	eugen
+ Author:	eugene lamnek
 */
 
 
@@ -11,7 +11,10 @@
 
 //harmonia libraries
 #include "sensors\water_sensors.h"
+#include "sensors\temp_sensors.h"
+#include "sensors\IMU.h"
 #include "comms\rf_comms.h"
+
 
 //FSM states
 enum { IDLE, MANUAL, STATIC_TRIM, RUN, ALARM } state;
@@ -30,6 +33,15 @@ void setup() {
 	Serial.begin(9600);
 	
 	init_rf_comms();
+	send_rf_comm("Harmonia II is awake - stored time is: " ); //+ get_rtc_time()
+
+	String strMsg = init_imu();
+	if (strMsg.length() > 0) {
+		send_rf_comm(strMsg);
+	}
+	else {
+		send_rf_comm("IMU sensor OK!!");
+	}
 	
 }
 
@@ -41,7 +53,8 @@ void loop() {
 	}*/
 	Serial.println("tester");
 	//send_rf_comm("hello from teensy!!");
-	delay(1000);
+	delay(2000);
+	send_rf_comm("temp fwd: " + String(read_fwd_temp()) + " temp aft: " + String(read_aft_temp()) + " temp IMU: " + String(read_imu_temp()));
 
 	//check for new commands coming from desktop remote
 	check_rf_comms();
@@ -49,6 +62,7 @@ void loop() {
 	//set state using commands from remote
 	String strRemoteCommand = get_remote_command();
 	send_rf_comm("remote command received: " + strRemoteCommand);
+
 	if (state == ALARM) {
 		//system in alarm state - can only be changed by command to go to idle state
 		if (strRemoteCommand == "IDLE") { state = IDLE; }	
