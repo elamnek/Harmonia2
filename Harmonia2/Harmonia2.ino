@@ -4,17 +4,19 @@
  Author:	eugene lamnek
 */
 
-
+#include <_Teensy.h>
+#include <TimeLib.h>
 #include <WireKinetis.h>
 #include <WireIMXRT.h>
 #include <Wire.h>
+#include <DS1307RTC.h>
 
 //harmonia libraries
 #include "sensors\water_sensors.h"
 #include "sensors\temp_sensors.h"
 #include "sensors\IMU.h"
+#include "sensors\RTC.h"
 #include "comms\rf_comms.h"
-
 
 //FSM states
 enum { IDLE, MANUAL, STATIC_TRIM, RUN, ALARM } state;
@@ -33,9 +35,18 @@ void setup() {
 	Serial.begin(9600);
 	
 	init_rf_comms();
-	send_rf_comm("Harmonia II is awake - stored time is: " ); //+ get_rtc_time()
 
-	String strMsg = init_imu();
+	String strMsg = init_rtc();
+	if (strMsg.length() > 0) {
+		send_rf_comm(strMsg);
+	}
+	else {
+		send_rf_comm("RTC OK!!");
+	}
+
+	send_rf_comm("Harmonia II is awake - stored time is: " + get_rtc_time()); //
+
+	strMsg = init_imu();
 	if (strMsg.length() > 0) {
 		send_rf_comm(strMsg);
 	}
@@ -54,7 +65,7 @@ void loop() {
 	Serial.println("tester");
 	//send_rf_comm("hello from teensy!!");
 	delay(2000);
-	send_rf_comm("temp fwd: " + String(read_fwd_temp()) + " temp aft: " + String(read_aft_temp()) + " temp IMU: " + String(read_imu_temp()));
+	send_rf_comm("temp fwd: " + String(read_fwd_temp()) + " temp aft: " + String(read_aft_temp()) + " temp IMU: " + String(read_imu_temp())); //
 
 	//check for new commands coming from desktop remote
 	check_rf_comms();
