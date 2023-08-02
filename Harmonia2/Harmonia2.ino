@@ -44,7 +44,7 @@ void setup() {
 		send_rf_comm("RTC OK!!");
 	}
 
-	send_rf_comm("Harmonia II is awake - stored time is: " + get_rtc_time()); //
+	send_rf_comm("Harmonia II is awake - stored time is: " + get_rtc_time());
 
 	strMsg = init_imu();
 	if (strMsg.length() > 0) {
@@ -65,7 +65,7 @@ void loop() {
 	Serial.println("tester");
 	//send_rf_comm("hello from teensy!!");
 	delay(2000);
-	send_rf_comm("temp fwd: " + String(read_fwd_temp()) + " temp aft: " + String(read_aft_temp()) + " temp IMU: " + String(read_imu_temp())); //
+	send_rf_comm(get_rtc_time() + " temperatures fwd: " + String(read_fwd_temp()) + " aft: " + String(read_aft_temp()) + " IMU: " + String(read_imu_temp())); //
 
 	//check for new commands coming from desktop remote
 	check_rf_comms();
@@ -100,7 +100,7 @@ void loop() {
 
 	//check for command to set time
 	if (strRemoteCommand == "TIMESET") {
-		//set_rtc_time(get_remote_param());
+		set_rtc_time(get_remote_param());
 		clear_rf_command();
 	}
 

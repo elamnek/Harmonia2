@@ -11,6 +11,8 @@
 
 String init_rtc();
 
+void set_rtc_time(String strUNIXDateTimeFromPC);
+
 String get_rtc_time();
 
 #endif
