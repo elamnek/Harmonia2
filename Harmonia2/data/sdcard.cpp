@@ -13,7 +13,6 @@ String init_sdcard() {
         return "ERROR: SDCard failed to initialise";
     }
 
-
     return "";	
 }
 

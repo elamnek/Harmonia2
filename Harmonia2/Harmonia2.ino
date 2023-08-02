@@ -38,16 +38,22 @@ void setup() {
 	
 	init_rf_comms();
 
-	String strMsg = init_rtc();
+	String strMsg = init_sdcard();
+	if (strMsg.length() > 0) {
+		send_rf_comm(strMsg);
+	}
+	else {
+		send_rf_comm("SDCard OK!!");
+	}
+
+	strMsg = init_rtc();
 	if (strMsg.length() > 0) {
 		send_rf_comm(strMsg);
 	}
 	else {
 		send_rf_comm("RTC OK!!");
 	}
-
-	send_rf_comm("Harmonia II is awake - stored time is: " + get_rtc_time());
-
+	
 	strMsg = init_imu();
 	if (strMsg.length() > 0) {
 		send_rf_comm(strMsg);
@@ -55,6 +61,8 @@ void setup() {
 	else {
 		send_rf_comm("IMU sensor OK!!");
 	}
+
+	send_rf_comm("Harmonia II is awake - stored time is: " + get_rtc_time());
 	
 }
 
