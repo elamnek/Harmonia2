@@ -37,6 +37,7 @@ void setup() {
 	Serial.begin(9600);
 	
 	init_rf_comms();
+	init_rtc();
 
 	String strMsg = init_sdcard();
 	if (strMsg.length() > 0) {
@@ -44,14 +45,6 @@ void setup() {
 	}
 	else {
 		send_rf_comm("SDCard OK!!");
-	}
-
-	strMsg = init_rtc();
-	if (strMsg.length() > 0) {
-		send_rf_comm(strMsg);
-	}
-	else {
-		send_rf_comm("RTC OK!!");
 	}
 	
 	strMsg = init_imu();
@@ -68,6 +61,11 @@ void setup() {
 
 void loop() {
   
+	
+	//do state data write/send here...
+
+
+	
 	//check leak sensors and override any state that has been set
 	/*if (fwd_leak_detected() == 1 || aft_leak_detected() == 1) {
 		state = ALARM;

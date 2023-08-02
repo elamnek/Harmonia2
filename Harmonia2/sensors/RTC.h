@@ -9,7 +9,7 @@
 	#include "WProgram.h"
 #endif
 
-String init_rtc();
+void init_rtc();
 
 void set_rtc_time(String strUNIXDateTimeFromPC);
 

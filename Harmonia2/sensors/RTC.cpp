@@ -16,14 +16,10 @@
 
 const long DEFAULT_TIME = 1357041600; // Jan 1 2013
 
-String init_rtc() {
+void init_rtc() {
 
 	setSyncProvider(RTC.get);   // the function to get the time from the RTC
-	if (timeStatus() != timeSet)
-		return "ERROR: RTC failed to initialise";
-	else
-		return "";
-
+	
 }
 
 void set_rtc_time(String strUNIXDateTimeFromPC) {
