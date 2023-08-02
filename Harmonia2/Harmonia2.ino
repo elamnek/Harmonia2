@@ -4,6 +4,7 @@
  Author:	eugene lamnek
 */
 
+#include <SD.h>
 #include <_Teensy.h>
 #include <TimeLib.h>
 #include <WireKinetis.h>
@@ -17,6 +18,7 @@
 #include "sensors\IMU.h"
 #include "sensors\RTC.h"
 #include "comms\rf_comms.h"
+#include "data\sdcard.h"
 
 //FSM states
 enum { IDLE, MANUAL, STATIC_TRIM, RUN, ALARM } state;
