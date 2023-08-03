@@ -16,7 +16,7 @@ String init_sdcard() {
     return "";	
 }
 
-//return adtf line
+//returns adtf line
 String sdcard_logState(subSystemState_t* state, int8_t logFlags) {
     String dataString = "{";
 

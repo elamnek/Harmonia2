@@ -26,6 +26,7 @@ typedef struct {
 	float xPos;
 
 	float balPos[2];
+	float balMotorTemp[2];
 
 	float dpPos;
 	float tailPos[4];
