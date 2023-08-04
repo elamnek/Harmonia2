@@ -33,6 +33,8 @@ String  get_state() {
 	return "";
 }
 
+int intStateTimerStart;
+
 void setup() {
 	Serial.begin(9600);
 	
@@ -56,6 +58,8 @@ void setup() {
 	}
 
 	send_rf_comm("Harmonia II is awake - stored time is: " + get_rtc_time());
+
+	intStateTimerStart = millis();
 	
 }
 
@@ -63,24 +67,40 @@ void loop() {
   
 	
 	//do state data write/send here...
+	int intStateTimeElapsed = millis() - intStateTimerStart;
+	if (intStateTimeElapsed > 1000) {
 
+		//create the state object
+		subSystemState_t state;
+		state.logTime = get_rtc_time();
+		state.balMotorTemp[0] = read_fwd_temp();
+		state.balMotorTemp[1] = read_aft_temp();
+		state.xPos = 22.00;
+
+		//log to sdcard and retrieve the logged string
+		String strLogLine = sdcard_logState(&state, LOG_POSITION + LOG_BALLAST);
+		send_rf_comm(strLogLine);
+
+		//reset timer
+		intStateTimerStart = millis();
+	}
 
 	
 	//check leak sensors and override any state that has been set
 	/*if (fwd_leak_detected() == 1 || aft_leak_detected() == 1) {
 		state = ALARM;
 	}*/
-	Serial.println("tester");
+	//Serial.println("tester");
 	//send_rf_comm("hello from teensy!!");
-	delay(2000);
-	send_rf_comm(get_rtc_time() + " temperatures fwd: " + String(read_fwd_temp()) + " aft: " + String(read_aft_temp()) + " IMU: " + String(read_imu_temp())); //
+	//delay(2000);
+	//send_rf_comm(get_rtc_time() + " temperatures fwd: " + String(read_fwd_temp()) + " aft: " + String(read_aft_temp()) + " IMU: " + String(read_imu_temp())); //
 
 	//check for new commands coming from desktop remote
 	check_rf_comms();
 
 	//set state using commands from remote
 	String strRemoteCommand = get_remote_command();
-	send_rf_comm("remote command received: " + strRemoteCommand);
+	//send_rf_comm("remote command received: " + strRemoteCommand);
 
 	if (state == ALARM) {
 		//system in alarm state - can only be changed by command to go to idle state
