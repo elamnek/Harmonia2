@@ -21,10 +21,10 @@
 #include "data\sdcard.h"
 
 //FSM states
-enum { IDLE, MANUAL, STATIC_TRIM, RUN, ALARM } state;
+enum { IDLE, MANUAL, STATIC_TRIM, RUN, ALARM } fsm_state;
 //function used to return text description of current state
 String  get_state() {
-	switch (state) {
+	switch (fsm_state) {
 	case IDLE: return "IDLE";
 	case MANUAL: return "MANUAL";
 	case STATIC_TRIM: return "STATIC_TRIM";	
@@ -70,15 +70,27 @@ void loop() {
 	int intStateTimeElapsed = millis() - intStateTimerStart;
 	if (intStateTimeElapsed > 1000) {
 
+		//refresh IMU data
+		read_imu();
+
 		//create the state object
-		subSystemState_t state;
-		state.logTime = get_rtc_time();
-		state.balMotorTemp[0] = read_fwd_temp();
-		state.balMotorTemp[1] = read_aft_temp();
-		state.xPos = 22.00;
+		subSystemState_t systemState;
+		systemState.logTime = get_rtc_time();
+		systemState.FSMState = fsm_state;
+		systemState.balPos[0] = 50;
+		systemState.balPos[1] = 50;
+		systemState.balMotorTemp[0] = read_fwd_temp();
+		systemState.balMotorTemp[1] = read_aft_temp();
+		systemState.att[0] = get_imuorientation_x();
+		systemState.att[1] = get_imuorientation_y();
+		systemState.att[2] = get_imuorientation_z();
+		systemState.acc[0] = get_imuacceleration_x();
+		systemState.acc[1] = get_imuacceleration_y();
+		systemState.acc[2] = get_imuacceleration_z();
+		
 
 		//log to sdcard and retrieve the logged string
-		String strLogLine = sdcard_logState(&state, LOG_POSITION + LOG_BALLAST);
+		String strLogLine = sdcard_logState(&systemState, LOG_ATT + LOG_ACC + LOG_BALLAST);
 		send_rf_comm(strLogLine);
 
 		//reset timer
@@ -88,7 +100,7 @@ void loop() {
 	
 	//check leak sensors and override any state that has been set
 	/*if (fwd_leak_detected() == 1 || aft_leak_detected() == 1) {
-		state = ALARM;
+		fsm_state = ALARM;
 	}*/
 	//Serial.println("tester");
 	//send_rf_comm("hello from teensy!!");
@@ -102,27 +114,27 @@ void loop() {
 	String strRemoteCommand = get_remote_command();
 	//send_rf_comm("remote command received: " + strRemoteCommand);
 
-	if (state == ALARM) {
+	if (fsm_state == ALARM) {
 		//system in alarm state - can only be changed by command to go to idle state
-		if (strRemoteCommand == "IDLE") { state = IDLE; }	
+		if (strRemoteCommand == "IDLE") { fsm_state = IDLE; }
 	}
 	else {
 		//system NOT in alarm state - normal state changes allowed
-		if (strRemoteCommand == "IDLE") { state = IDLE; }
-		if (strRemoteCommand == "MANUAL") { state = MANUAL; }
+		if (strRemoteCommand == "IDLE") { fsm_state = IDLE; }
+		if (strRemoteCommand == "MANUAL") { fsm_state = MANUAL; }
 		if (strRemoteCommand == "STATIC_TRIM") {
-			state = STATIC_TRIM;
+			fsm_state = STATIC_TRIM;
 			//init_static_trim_2(get_remote_param().toFloat(), 0);
 			clear_rf_command();
 		}
 		if (strRemoteCommand == "RUN") {
-			state = RUN;
+			fsm_state = RUN;
 			//blnReadyToRun = false;
 			//init_run_2(get_remote_param());
 			clear_rf_command();
 
 		}	
-		if (strRemoteCommand == "ALARM") { state = ALARM; }
+		if (strRemoteCommand == "ALARM") { fsm_state = ALARM; }
 
 	}
 
@@ -133,7 +145,7 @@ void loop() {
 	}
 
 	//state control	
-	switch (state) {
+	switch (fsm_state) {
 	case IDLE:
 
 		//in idle state need to stop any active operation

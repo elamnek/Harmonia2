@@ -19,6 +19,7 @@
 
 typedef struct {
 	String logTime;
+	String FSMState;
 
 	float acc[3];
 	float att[3];

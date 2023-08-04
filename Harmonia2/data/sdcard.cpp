@@ -20,8 +20,9 @@ String init_sdcard() {
 String sdcard_logState(subSystemState_t* state, int8_t logFlags) {
     String dataString = "{";
 
-    //always include timestamp
+    //always include timestamp and state
     dataString += "13|" + state->logTime + ",";
+    dataString += "4|" + state->FSMState + ",";
 
     if ((logFlags & LOG_ACC) == LOG_ACC) {
         dataString += "32|" + String(state->acc[0]) + ","; //x direction
@@ -46,6 +47,8 @@ String sdcard_logState(subSystemState_t* state, int8_t logFlags) {
     if ((logFlags & LOG_BALLAST) == LOG_BALLAST) {
         dataString += "17|" + String(state->balPos[0]) + ","; //fwd ballast
         dataString += "18|" + String(state->balPos[1]) + ","; //aft ballast
+        dataString += "36|" + String(state->balMotorTemp[0]) + ","; //fwd ballast motor temp
+        dataString += "37|" + String(state->balMotorTemp[1]) + ","; //aft ballast motor temp
     }
 
     if ((logFlags & LOG_SURFACES) == LOG_SURFACES) {
