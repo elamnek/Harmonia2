@@ -4,6 +4,9 @@
  Author:	eugene lamnek
 */
 
+#include <Motoron.h>
+#include <motoron_protocol.h>
+#include <MS5837.h>
 #include <SD.h>
 #include <_Teensy.h>
 #include <TimeLib.h>
@@ -13,17 +16,19 @@
 #include <DS1307RTC.h>
 
 //harmonia libraries
+#include "sensors\depth_sensor.h"
 #include "sensors\water_sensors.h"
 #include "sensors\temp_sensors.h"
 #include "sensors\IMU.h"
 #include "sensors\RTC.h"
 #include "comms\rf_comms.h"
 #include "data\sdcard.h"
+#include "control\syringe_ballast.h"
 
 //FSM states
 enum { IDLE, MANUAL, STATIC_TRIM, RUN, ALARM } fsm_state;
 //function used to return text description of current state
-String  get_state() {
+String  get_system_state() {
 	switch (fsm_state) {
 	case IDLE: return "IDLE";
 	case MANUAL: return "MANUAL";
@@ -57,10 +62,20 @@ void setup() {
 		send_rf_comm("IMU sensor OK!!");
 	}
 
+	strMsg = init_depth_sensor(997);
+	if (strMsg.length() > 0) {
+		send_rf_comm(strMsg);
+	}
+	else {
+		send_rf_comm("depth sensor OK!!");
+	}
+
 	send_rf_comm("Harmonia II is awake - stored time is: " + get_rtc_time());
 
 	intStateTimerStart = millis();
-	
+
+
+	fsm_state = IDLE;
 }
 
 void loop() {
@@ -76,7 +91,7 @@ void loop() {
 		//create the state object
 		subSystemState_t systemState;
 		systemState.logTime = get_rtc_time();
-		systemState.FSMState = fsm_state;
+		systemState.FSMState = get_system_state();
 		systemState.balPos[0] = 50;
 		systemState.balPos[1] = 50;
 		systemState.balMotorTemp[0] = read_fwd_temp();
@@ -87,8 +102,8 @@ void loop() {
 		systemState.acc[0] = get_imuacceleration_x();
 		systemState.acc[1] = get_imuacceleration_y();
 		systemState.acc[2] = get_imuacceleration_z();
+		systemState.internalTemp = read_imu_temp();
 		
-
 		//log to sdcard and retrieve the logged string
 		String strLogLine = sdcard_logState(&systemState, LOG_ATT + LOG_ACC + LOG_BALLAST);
 		send_rf_comm(strLogLine);

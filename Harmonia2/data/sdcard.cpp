@@ -49,6 +49,7 @@ String sdcard_logState(subSystemState_t* state, int8_t logFlags) {
         dataString += "18|" + String(state->balPos[1]) + ","; //aft ballast
         dataString += "36|" + String(state->balMotorTemp[0]) + ","; //fwd ballast motor temp
         dataString += "37|" + String(state->balMotorTemp[1]) + ","; //aft ballast motor temp
+        dataString += "12|" + String(state->internalTemp) + ","; //internal IMU recorded temp
     }
 
     if ((logFlags & LOG_SURFACES) == LOG_SURFACES) {

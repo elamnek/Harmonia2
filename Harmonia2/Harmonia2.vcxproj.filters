@@ -42,6 +42,12 @@
     <ClCompile Include="data\sdcard.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="sensors\depth_sensor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="control\syringe_ballast.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="__vm\.Harmonia2.vsarduino.h">
@@ -63,6 +69,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="data\sdcard.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="sensors\depth_sensor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="control\syringe_ballast.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

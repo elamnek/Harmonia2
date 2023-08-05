@@ -23,11 +23,13 @@ typedef struct {
 
 	float acc[3];
 	float att[3];
+	
 	float depth;
 	float xPos;
 
 	float balPos[2];
 	float balMotorTemp[2];
+	float internalTemp;
 
 	float dpPos;
 	float tailPos[4];
