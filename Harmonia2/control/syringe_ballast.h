@@ -11,6 +11,11 @@
 
 void ballast_init();
 
+void command_ballast(String strCommand, int intValue);
+
+int get_fwd_ballast_motor_speed();
+int get_aft_ballast_motor_speed();
+
 int32_t read_fwd_ballast_pos();
 int32_t read_aft_ballast_pos();
 

@@ -24,16 +24,16 @@ String sdcard_logState(subSystemState_t* state, int8_t logFlags) {
     dataString += "13|" + state->logTime + ",";
     dataString += "4|" + state->FSMState + ",";
 
-    if ((logFlags & LOG_ACC) == LOG_ACC) {
-        dataString += "32|" + String(state->acc[0]) + ","; //x direction
-        dataString += "33|" + String(state->acc[1]) + ","; //y direction
-        dataString += "34|" + String(state->acc[2]) + ","; //z direction
+    if ((logFlags & LOG_ACCELERATION) == LOG_ACCELERATION) {
+        dataString += "32|" + String(state->acceleration[0]) + ","; //x direction
+        dataString += "33|" + String(state->acceleration[1]) + ","; //y direction
+        dataString += "34|" + String(state->acceleration[2]) + ","; //z direction
     }
 
-    if ((logFlags & LOG_ATT) == LOG_ATT) {
-        dataString += "14|" + String(state->att[0]) + ","; //heading
-        dataString += "15|" + String(state->att[1]) + ","; //pitch
-        dataString += "16|" + String(state->att[2]) + ","; //roll
+    if ((logFlags & LOG_ATTITUDE) == LOG_ATTITUDE) {
+        dataString += "14|" + String(state->attitude[0]) + ","; //heading
+        dataString += "15|" + String(state->attitude[1]) + ","; //pitch
+        dataString += "16|" + String(state->attitude[2]) + ","; //roll
     }
 
     if ((logFlags & LOG_DEPTH) == LOG_DEPTH) {
@@ -49,6 +49,8 @@ String sdcard_logState(subSystemState_t* state, int8_t logFlags) {
         dataString += "18|" + String(state->balPos[1]) + ","; //aft ballast
         dataString += "36|" + String(state->balMotorTemp[0]) + ","; //fwd ballast motor temp
         dataString += "37|" + String(state->balMotorTemp[1]) + ","; //aft ballast motor temp
+        dataString += "38|" + String(state->balMotorSpeed[0]) + ","; //fwd ballast motor controller speed setting
+        dataString += "39|" + String(state->balMotorSpeed[1]) + ","; //aft ballast motor controller speed setting
         dataString += "12|" + String(state->internalTemp) + ","; //internal IMU recorded temp
     }
 

@@ -92,6 +92,7 @@
     <ClCompile Include="sensors\water_sensors.cpp" />
     <ClCompile Include="sensors\temp_sensors.cpp" />
     <ClCompile Include="control\syringe_ballast.cpp" />
+    <ClCompile Include="states\state_manual.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="src\arduino folders read me.txt">
@@ -109,6 +110,7 @@
     <ClInclude Include="sensors\water_sensors.h" />
     <ClInclude Include="sensors\temp_sensors.h" />
     <ClInclude Include="control\syringe_ballast.h" />
+    <ClInclude Include="states\state_manual.h" />
     <ClInclude Include="__vm\.Harmonia2.vsarduino.h" />
   </ItemGroup>
   <PropertyGroup>

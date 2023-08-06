@@ -11,10 +11,13 @@
 #define aftBalMC 2
 
 //i2C address
-#define forBalAddr 10
+#define fwdBalAddr 10
 #define aftBalAddr 9
 
 MotoronI2C BallastMC;
+
+int m_intFwdMotorSpeed;
+int m_intAftMotorSpeed;
 
 void ballast_init() {
 
@@ -31,7 +34,7 @@ void ballast_init() {
 
 	// Use a short command timeout of 100 ms: the Motoron will
 	// stop the motors if it does not get a command for 100 ms.
-	// BallastMC.setCommandTimeoutMilliseconds(100);
+	BallastMC.setCommandTimeoutMilliseconds(2000);
 
 	// Configure motor - Forward
 	BallastMC.setMaxAcceleration(forBalMC, 140);
@@ -45,19 +48,36 @@ void ballast_init() {
 
 
 }
+void command_ballast(String strCommand, int intValue) {
+
+	if (strCommand == "FWD_BALLAST") {
+		m_intFwdMotorSpeed = intValue;
+		BallastMC.setSpeed(forBalMC, intValue);
+	}
+	else if (strCommand == "AFT_BALLAST") {
+		m_intAftMotorSpeed = intValue;
+		BallastMC.setSpeed(aftBalMC, intValue);
+	}	
+}
+
+int get_fwd_ballast_motor_speed() {
+	return m_intFwdMotorSpeed;
+}
+int get_aft_ballast_motor_speed() {
+	return m_intAftMotorSpeed;
+}
+
 
 int32_t read_fwd_ballast_pos() {
-	int32_t balPos = readBallastPos(forBalAddr);
-	if (balPos != -10000) {return balPos;}
+	return readBallastPos(fwdBalAddr);
 }
 int32_t read_aft_ballast_pos() {
-	int32_t balPos = readBallastPos(aftBalAddr);
-	if (balPos != -10000) {return balPos;}	
+	return readBallastPos(aftBalAddr);	
 }
 
 
 void resetBallast(void) {
-	Wire2.beginTransmission(forBalAddr);
+	Wire2.beginTransmission(fwdBalAddr);
 	Wire2.write("*R");
 	Wire2.endTransmission();
 	delay(200);

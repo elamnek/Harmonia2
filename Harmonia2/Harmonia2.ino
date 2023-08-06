@@ -4,6 +4,7 @@
  Author:	eugene lamnek
 */
 
+
 #include <Motoron.h>
 #include <motoron_protocol.h>
 #include <MS5837.h>
@@ -24,9 +25,11 @@
 #include "comms\rf_comms.h"
 #include "data\sdcard.h"
 #include "control\syringe_ballast.h"
+#include "states\state_manual.h"
 
 //FSM states
-enum { IDLE, MANUAL, STATIC_TRIM, RUN, ALARM } fsm_state;
+enum FSMState { IDLE, MANUAL, STATIC_TRIM, RUN, ALARM } fsm_state;
+
 //function used to return text description of current state
 String  get_system_state() {
 	switch (fsm_state) {
@@ -45,6 +48,7 @@ void setup() {
 	
 	init_rf_comms();
 	init_rtc();
+	ballast_init();
 
 	String strMsg = init_sdcard();
 	if (strMsg.length() > 0) {
@@ -92,20 +96,23 @@ void loop() {
 		subSystemState_t systemState;
 		systemState.logTime = get_rtc_time();
 		systemState.FSMState = get_system_state();
-		systemState.balPos[0] = 50;
-		systemState.balPos[1] = 50;
+		systemState.depth = get_depth();
+		systemState.balPos[0] = read_fwd_ballast_pos();
+		systemState.balPos[1] = read_aft_ballast_pos();
 		systemState.balMotorTemp[0] = read_fwd_temp();
 		systemState.balMotorTemp[1] = read_aft_temp();
-		systemState.att[0] = get_imuorientation_x();
-		systemState.att[1] = get_imuorientation_y();
-		systemState.att[2] = get_imuorientation_z();
-		systemState.acc[0] = get_imuacceleration_x();
-		systemState.acc[1] = get_imuacceleration_y();
-		systemState.acc[2] = get_imuacceleration_z();
+		systemState.balMotorSpeed[0] = get_fwd_ballast_motor_speed();
+		systemState.balMotorSpeed[1] = get_aft_ballast_motor_speed();
+		systemState.attitude[0] = get_imuorientation_x();
+		systemState.attitude[1] = get_imuorientation_y();
+		systemState.attitude[2] = get_imuorientation_z();
+		systemState.acceleration[0] = get_imuacceleration_x();
+		systemState.acceleration[1] = get_imuacceleration_y();
+		systemState.acceleration[2] = get_imuacceleration_z();
 		systemState.internalTemp = read_imu_temp();
 		
 		//log to sdcard and retrieve the logged string
-		String strLogLine = sdcard_logState(&systemState, LOG_ATT + LOG_ACC + LOG_BALLAST);
+		String strLogLine = sdcard_logState(&systemState, LOG_ATTITUDE + LOG_ACCELERATION + LOG_BALLAST + LOG_DEPTH);
 		send_rf_comm(strLogLine);
 
 		//reset timer
@@ -171,8 +178,8 @@ void loop() {
 	case MANUAL:
 
 		//this checks for a manual command from RF remote and applies it
-		//apply_manual_command();
-		//check_pushrod(); //adjusts position of pushrod based on latest setpoint command
+		apply_manual_command();
+		
 		clear_rf_command();
 
 		break;
