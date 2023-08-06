@@ -20,9 +20,11 @@ String init_sdcard() {
 String sdcard_logState(subSystemState_t* state, int8_t logFlags) {
     String dataString = "{";
 
-    //always include timestamp and state
+    //always include timestamp, state and leak data
     dataString += "13|" + state->logTime + ",";
     dataString += "4|" + state->FSMState + ",";
+    dataString += "2|" + String(state->leak[0]) + ",";
+    dataString += "3|" + String(state->leak[1]) + ",";
 
     if ((logFlags & LOG_ACCELERATION) == LOG_ACCELERATION) {
         dataString += "32|" + String(state->acceleration[0]) + ","; //x direction

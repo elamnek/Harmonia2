@@ -12,6 +12,7 @@ float m_fltCachedDepth;
 String init_depth_sensor(int intFluidDensity) {
 
     while (!sensor.init()) {
+
         return "ERROR: bluerobotics pressure sensor failed to initialise";
     }
 

@@ -20,6 +20,7 @@
 typedef struct {
 	String logTime;
 	String FSMState;
+	int leak[2];
 
 	float acceleration[3];
 	float attitude[3];

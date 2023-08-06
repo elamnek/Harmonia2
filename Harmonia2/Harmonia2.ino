@@ -47,6 +47,7 @@ void setup() {
 	Serial.begin(9600);
 	
 	init_rf_comms();
+	init_watersensors();
 	init_rtc();
 	ballast_init();
 
@@ -71,7 +72,7 @@ void setup() {
 		send_rf_comm(strMsg);
 	}
 	else {
-		send_rf_comm("depth sensor OK!!");
+		send_rf_comm("Depth sensor OK!!");
 	}
 
 	send_rf_comm("Harmonia II is awake - stored time is: " + get_rtc_time());
@@ -96,6 +97,8 @@ void loop() {
 		subSystemState_t systemState;
 		systemState.logTime = get_rtc_time();
 		systemState.FSMState = get_system_state();
+		systemState.leak[0] = fwd_leak_check();
+		systemState.leak[1] = aft_leak_check();
 		systemState.depth = get_depth();
 		systemState.balPos[0] = read_fwd_ballast_pos();
 		systemState.balPos[1] = read_aft_ballast_pos();
@@ -121,14 +124,10 @@ void loop() {
 
 	
 	//check leak sensors and override any state that has been set
-	/*if (fwd_leak_detected() == 1 || aft_leak_detected() == 1) {
+	if (fwd_leak_check() == 1 || aft_leak_check() == 1) {
 		fsm_state = ALARM;
-	}*/
-	//Serial.println("tester");
-	//send_rf_comm("hello from teensy!!");
-	//delay(2000);
-	//send_rf_comm(get_rtc_time() + " temperatures fwd: " + String(read_fwd_temp()) + " aft: " + String(read_aft_temp()) + " IMU: " + String(read_imu_temp())); //
-
+	}
+	
 	//check for new commands coming from desktop remote
 	check_rf_comms();
 
