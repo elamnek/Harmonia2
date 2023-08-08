@@ -5,6 +5,7 @@
 */
 
 
+#include <PID_v1.h>
 #include <Motoron.h>
 #include <motoron_protocol.h>
 #include <MS5837.h>
@@ -26,15 +27,16 @@
 #include "data\sdcard.h"
 #include "control\syringe_ballast.h"
 #include "states\state_manual.h"
+#include "states\state_static_trim.h"
 
 //FSM states
-enum FSMState { IDLE, MANUAL, STATIC_TRIM, RUN, ALARM } fsm_state;
+enum FSMState { IDLE, REMOTE, STATIC_TRIM, RUN, ALARM } fsm_state;
 
 //function used to return text description of current state
 String  get_system_state() {
 	switch (fsm_state) {
 	case IDLE: return "IDLE";
-	case MANUAL: return "MANUAL";
+	case REMOTE: return "REMOTE";
 	case STATIC_TRIM: return "STATIC_TRIM";	
 	case RUN: return "RUN";
 	case ALARM: return "ALARM";}
@@ -142,10 +144,10 @@ void loop() {
 	else {
 		//system NOT in alarm state - normal state changes allowed
 		if (strRemoteCommand == "IDLE") { fsm_state = IDLE; }
-		if (strRemoteCommand == "MANUAL") { fsm_state = MANUAL; }
+		if (strRemoteCommand == "REMOTE") { fsm_state = REMOTE; }
 		if (strRemoteCommand == "STATIC_TRIM") {
 			fsm_state = STATIC_TRIM;
-			//init_static_trim_2(get_remote_param().toFloat(), 0);
+			init_static_trim(0);
 			clear_rf_command();
 		}
 		if (strRemoteCommand == "RUN") {
@@ -174,7 +176,7 @@ void loop() {
 		//commmand_main_motor(0);
 
 		break;
-	case MANUAL:
+	case REMOTE:
 
 		//this checks for a manual command from RF remote and applies it
 		apply_manual_command();
@@ -184,8 +186,7 @@ void loop() {
 		break;
 	case STATIC_TRIM:
 
-		//adjust_depth_2();
-		//adjust_pitch_2(get_imuorientation_y());
+		adjust_pitch();
 
 		break;
 	case RUN:
