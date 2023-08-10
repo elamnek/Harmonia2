@@ -11,6 +11,9 @@
 
 void ballast_init();
 
+void ballast_adjust();
+boolean ballast_setpoints(double fwdSetpoint, double aftSetpoint);
+
 void command_ballast(String strCommand, int intValue);
 
 int get_fwd_ballast_motor_speed();

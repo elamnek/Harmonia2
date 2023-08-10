@@ -6,11 +6,12 @@
 #include <Motoron.h>
 #include <motoron_protocol.h>
 #include <PID_v1.h>
+#include "..\comms\rf_comms.h"
 //https://playground.arduino.cc/Code/PIDLibaryBasicExample/
 
 
 //motor controller bays
-#define forBalMC 1
+#define fwdBalMC 1
 #define aftBalMC 2
 
 //i2C address
@@ -36,6 +37,18 @@ PID aftBalPID(&aftBalInput, &aftBalOutput, &aftBalSetpoint, KpBal, KiBal, KdBal,
 boolean m_blnFwdInitialising;
 boolean m_blnAftInitialising;
 
+//enum fwdBalState { INIT, BACKOFF, OPERATE} fwd_bal_state;
+//enum aftBalState { INIT, BACKOFF, OPERATE } aft_bal_state;
+
+typedef enum {
+	INIT,
+	BACKOFF,
+	OPERATE
+} balState_t;
+
+balState_t fwdBalState = INIT;
+balState_t aftBalState = INIT;
+
 void ballast_init() {
 
 	Wire2.begin();
@@ -54,8 +67,8 @@ void ballast_init() {
 	BallastMC.setCommandTimeoutMilliseconds(2000);
 
 	// Configure motor - Forward
-	BallastMC.setMaxAcceleration(forBalMC, 140);
-	BallastMC.setMaxDeceleration(forBalMC, 300);
+	BallastMC.setMaxAcceleration(fwdBalMC, 140);
+	BallastMC.setMaxDeceleration(fwdBalMC, 300);
 
 	// Configure motor - Aft
 	BallastMC.setMaxAcceleration(aftBalMC, 140);
@@ -63,22 +76,109 @@ void ballast_init() {
 	BallastMC.clearMotorFault();
 	resetBallast();
 
-	m_blnFwdInitialising = true;
-	m_blnAftInitialising = true;
+	fwdBalInput = -10;
+	aftBalInput = -10;
 
+	fwdBalPID.SetOutputLimits(-800, 800);
+	aftBalPID.SetOutputLimits(-800, 800);
+
+	//turn the PIDs on
+	fwdBalPID.SetMode(AUTOMATIC);
+	aftBalPID.SetMode(AUTOMATIC);
+	
 }
 
-void setpoint_follow(double fwdPosSetpoint,double aftPosSetpoint) {
-	if (m_blnFwdInitialising) {
-		//syringe is still initialising
 
+
+void ballast_adjust() {
+
+	int32_t fwdBallastPos = readBallastPos(fwdBalAddr);
+	int32_t aftBallastPos = readBallastPos(aftBalAddr);
+	fwdBalInput = fwdBallastPos;
+	aftBalInput = aftBallastPos;
+
+	m_intFwdMotorSpeed = 0;
+	m_intAftMotorSpeed = 0;
+
+	switch (fwdBalState) {
+	case INIT:
+		if (fwdBallastPos < 0) {
+			//BallastMC.setSpeed(fwdBalMC, -800);
+			m_intFwdMotorSpeed = -800;
+		}
+		else {
+			//BallastMC.setSpeed(fwdBalMC, 0);
+			fwdBalState = BACKOFF;
+		}
+		break;
+	case BACKOFF:
+		//fwdBalSetpoint = 10;
+		//if (dveInput > 0.15) {
+		fwdBalState = OPERATE;
+		//}
+		break;
+	case OPERATE:
+		fwdBalPID.Compute();
+		if (abs(fwdBalSetpoint - fwdBalInput) < 10) {
+			//BallastMC.setSpeed(fwdBalMC, 0);
+		}
+		else {
+			//BallastMC.setSpeed(fwdBalMC, fwdBalOutput * 800 / 255);
+			m_intFwdMotorSpeed = fwdBalOutput * 800 / 255;
+		}
+		break;
 	}
+	BallastMC.setSpeed(fwdBalMC, m_intFwdMotorSpeed);
+
+
+	
+	switch (aftBalState) {
+	case INIT:
+		if (aftBallastPos < 0) {
+			//BallastMC.setSpeed(aftBalMC, -800);
+			m_intAftMotorSpeed = -800;
+		}
+		else {
+			//BallastMC.setSpeed(aftBalMC, 0);
+			aftBalState = BACKOFF;
+		}
+		break;
+	case BACKOFF:
+		//aftBalSetpoint = 10;
+		//if (dveInput > 0.15) {
+		aftBalState = OPERATE;
+		//}
+		break;
+	case OPERATE:
+		aftBalPID.Compute();
+		if (abs(aftBalSetpoint - aftBalInput) < 10) {
+			//BallastMC.setSpeed(aftBalMC, 0);
+		}
+		else {
+			//BallastMC.setSpeed(aftBalMC, aftBalOutput * 800 / 255);
+			m_intAftMotorSpeed = aftBalOutput * 800 / 255;
+		}
+		break;
+	}
+	BallastMC.setSpeed(aftBalMC, m_intAftMotorSpeed);
+	
 }
+
+boolean ballast_setpoints(double fwdSetpoint, double aftSetpoint) {
+	fwdBalSetpoint = fwdSetpoint;
+	aftBalSetpoint = aftSetpoint;
+
+	send_rf_comm("fwd setpoint: " + String(fwdBalSetpoint));
+	send_rf_comm("aft setpoint: " + String(aftBalSetpoint));
+
+	return true;
+}
+
 void command_ballast(String strCommand, int intValue) {
 
 	if (strCommand == "FWD_BALLAST") {
 		m_intFwdMotorSpeed = intValue;
-		BallastMC.setSpeed(forBalMC, intValue);
+		BallastMC.setSpeed(fwdBalMC, intValue);
 	}
 	else if (strCommand == "AFT_BALLAST") {
 		m_intAftMotorSpeed = intValue;

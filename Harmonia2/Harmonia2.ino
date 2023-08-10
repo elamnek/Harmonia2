@@ -5,6 +5,7 @@
 */
 
 
+#include "helpers.h"
 #include <PID_v1.h>
 #include <Motoron.h>
 #include <motoron_protocol.h>
@@ -87,7 +88,9 @@ void setup() {
 
 void loop() {
   
-	
+	//make changes to ballast
+	ballast_adjust();
+
 	//do state data write/send here...
 	int intStateTimeElapsed = millis() - intStateTimerStart;
 	if (intStateTimeElapsed > 1000) {
