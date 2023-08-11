@@ -112,7 +112,7 @@ void loop() {
 		systemState.balMotorSpeed[0] = get_fwd_ballast_motor_speed();
 		systemState.balMotorSpeed[1] = get_aft_ballast_motor_speed();
 		systemState.attitude[0] = get_imuorientation_x();
-		systemState.attitude[1] = get_imuorientation_y();
+		systemState.attitude[1] = get_imupitch();
 		systemState.attitude[2] = get_imuorientation_z();
 		systemState.acceleration[0] = get_imuacceleration_x();
 		systemState.acceleration[1] = get_imuacceleration_y();
@@ -150,7 +150,7 @@ void loop() {
 		if (strRemoteCommand == "REMOTE") { fsm_state = REMOTE; }
 		if (strRemoteCommand == "STATIC_TRIM") {
 			fsm_state = STATIC_TRIM;
-			init_static_trim(0);
+			init_static_trim(0,0);
 			clear_rf_command();
 		}
 		if (strRemoteCommand == "RUN") {
@@ -189,7 +189,7 @@ void loop() {
 		break;
 	case STATIC_TRIM:
 
-		adjust_pitch();
+		adjust_trim();
 
 		break;
 	case RUN:

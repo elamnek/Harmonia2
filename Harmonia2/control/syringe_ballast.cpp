@@ -18,6 +18,8 @@
 #define fwdBalAddr 10
 #define aftBalAddr 9
 
+
+
 MotoronI2C BallastMC;
 
 int m_intFwdMotorSpeed;
@@ -165,6 +167,13 @@ void ballast_adjust() {
 }
 
 boolean ballast_setpoints(double fwdSetpoint, double aftSetpoint) {
+	
+	//make sure setpoints are within allowable limits
+	if (fwdSetpoint > BALLAST_MAX) { fwdSetpoint = BALLAST_MAX; }
+	if (aftSetpoint > BALLAST_MAX) { aftSetpoint = BALLAST_MAX; }
+	if (fwdSetpoint < BALLAST_MIN) { fwdSetpoint = BALLAST_MIN; }
+	if (aftSetpoint < BALLAST_MIN) { aftSetpoint = BALLAST_MIN; }
+	
 	fwdBalSetpoint = fwdSetpoint;
 	aftBalSetpoint = aftSetpoint;
 

@@ -9,6 +9,9 @@
 	#include "WProgram.h"
 #endif
 
+#define BALLAST_MAX 1600
+#define BALLAST_MIN 0
+
 void ballast_init();
 
 void ballast_adjust();

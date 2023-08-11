@@ -18,6 +18,8 @@ float get_imuorientation_x();
 float get_imuorientation_y();
 float get_imuorientation_z();
 
+float get_imupitch();
+
 float get_imuacceleration_x();
 float get_imuacceleration_y();
 float get_imuacceleration_z();

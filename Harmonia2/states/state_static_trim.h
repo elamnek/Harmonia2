@@ -9,9 +9,9 @@
 	#include "WProgram.h"
 #endif
 
-void init_static_trim(float flt);
+void init_static_trim(double dblTrimSetpoint, double dblDepthSetpoint);
 
-void adjust_pitch();
+void adjust_trim();
 
 #endif
 

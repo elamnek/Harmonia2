@@ -65,6 +65,14 @@ int8_t read_imu_temp() {
 float get_imuorientation_x() {
     return m_fltOrientation_x;
 }
+
+float get_imupitch() {
+
+    sensors_event_t orientationData;
+    bno.getEvent(&orientationData, Adafruit_BNO055::VECTOR_EULER);
+
+    return orientationData.orientation.z;
+}
 float get_imuorientation_y() {
     return m_fltOrientation_y;
 }
