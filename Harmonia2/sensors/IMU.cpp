@@ -2,6 +2,13 @@
 // https://learn.adafruit.com/adafruit-bno055-absolute-orientation-sensor/arduino-code
 // 
 
+
+//IMU has been placed at 90
+//therefore x = heading
+//          y = roll
+//          z = pitch
+
+
 #include "IMU.h"
 #include <Adafruit_Sensor.h>
 #include <Adafruit_BNO055.h>
@@ -58,26 +65,26 @@ void read_imu() {
 }
 
 int8_t read_imu_temp() {
-
     return bno.getTemp();
 }
 
-float get_imuorientation_x() {
-    return m_fltOrientation_x;
-}
-
-float get_imupitch() {
-
+//derived from z orientation
+float read_imu_pitch() {
     sensors_event_t orientationData;
     bno.getEvent(&orientationData, Adafruit_BNO055::VECTOR_EULER);
-
-    return orientationData.orientation.z;
+    return orientationData.orientation.z + 22.5;
 }
-float get_imuorientation_y() {
+//derived from x orientation
+float get_cached_heading() {
+    return m_fltOrientation_x;
+}
+//derived from y orientation
+float get_cached_roll() {
     return m_fltOrientation_y;
 }
-float get_imuorientation_z() {
-    return m_fltOrientation_z;
+//derived from z orientation
+float get_cached_pitch() {
+    return m_fltOrientation_z + 22.5;
 }
 float get_imuacceleration_x() {
     return m_fltAcceleration_x;

@@ -9,7 +9,7 @@
 	#include "WProgram.h"
 #endif
 
-void init_static_trim(double dblTrimSetpoint, double dblDepthSetpoint);
+void init_static_trim(double dblDepthSetpoint, double dblTrimSetpoint);
 
 void adjust_trim();
 

@@ -22,7 +22,7 @@ PID trmPID(&trmInput, &trmOutput, &trmSetpoint, KpTrm, KiTrm, KdTrm, DIRECT);
 double dblPrevFwdSetpoint;
 double dblPrevAftSetpoint;
 
-void init_static_trim(double dblTrimSetpoint, double dblDepthSetpoint) {
+void init_static_trim(double dblDepthSetpoint,double dblTrimSetpoint) {
 	
 	dveSetpoint = dblDepthSetpoint;
 	trmSetpoint = dblTrimSetpoint;
@@ -45,7 +45,7 @@ void adjust_trim() {
 	dveInput = 0; //get_depth();
 	dvePID.Compute();
 	
-	trmInput = -get_imupitch();
+	trmInput = -read_imu_pitch();
 	trmPID.Compute();
 
 	//calc new ballast setpoints
@@ -59,6 +59,7 @@ void adjust_trim() {
 	double aftSetpoint = dblPrevAftSetpoint + ((dveOutput - trmOutput)/2);*/
 
 	ballast_setpoints(fwdSetpoint, aftSetpoint);
+	
 
 	dblPrevFwdSetpoint = fwdSetpoint;
 	dblPrevAftSetpoint = aftSetpoint;

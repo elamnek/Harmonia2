@@ -177,8 +177,8 @@ boolean ballast_setpoints(double fwdSetpoint, double aftSetpoint) {
 	fwdBalSetpoint = fwdSetpoint;
 	aftBalSetpoint = aftSetpoint;
 
-	send_rf_comm("fwd setpoint: " + String(fwdBalSetpoint));
-	send_rf_comm("aft setpoint: " + String(aftBalSetpoint));
+	//send_rf_comm("fwd setpoint: " + String(fwdBalSetpoint));
+	//send_rf_comm("aft setpoint: " + String(aftBalSetpoint));
 
 	return true;
 }

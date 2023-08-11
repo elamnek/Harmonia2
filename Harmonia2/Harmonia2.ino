@@ -87,10 +87,9 @@ void setup() {
 }
 
 void loop() {
-  
-	//make changes to ballast
-	ballast_adjust();
 
+	ballast_adjust();
+  
 	//do state data write/send here...
 	int intStateTimeElapsed = millis() - intStateTimerStart;
 	if (intStateTimeElapsed > 1000) {
@@ -111,9 +110,9 @@ void loop() {
 		systemState.balMotorTemp[1] = read_aft_temp();
 		systemState.balMotorSpeed[0] = get_fwd_ballast_motor_speed();
 		systemState.balMotorSpeed[1] = get_aft_ballast_motor_speed();
-		systemState.attitude[0] = get_imuorientation_x();
-		systemState.attitude[1] = get_imupitch();
-		systemState.attitude[2] = get_imuorientation_z();
+		systemState.attitude[0] = get_cached_heading();
+		systemState.attitude[1] = get_cached_pitch();
+		systemState.attitude[2] = get_cached_roll();
 		systemState.acceleration[0] = get_imuacceleration_x();
 		systemState.acceleration[1] = get_imuacceleration_y();
 		systemState.acceleration[2] = get_imuacceleration_z();
@@ -150,7 +149,7 @@ void loop() {
 		if (strRemoteCommand == "REMOTE") { fsm_state = REMOTE; }
 		if (strRemoteCommand == "STATIC_TRIM") {
 			fsm_state = STATIC_TRIM;
-			init_static_trim(0,0);
+			init_static_trim(get_remote_param().toFloat(), 0);
 			clear_rf_command();
 		}
 		if (strRemoteCommand == "RUN") {

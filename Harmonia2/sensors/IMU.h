@@ -14,11 +14,11 @@ String init_imu();
 void read_imu();
 int8_t read_imu_temp();
 
-float get_imuorientation_x();
-float get_imuorientation_y();
-float get_imuorientation_z();
+float read_imu_pitch();
 
-float get_imupitch();
+float get_cached_heading();
+float get_cached_roll();
+float get_cached_pitch();
 
 float get_imuacceleration_x();
 float get_imuacceleration_y();
