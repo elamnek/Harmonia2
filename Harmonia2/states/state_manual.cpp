@@ -20,7 +20,7 @@ void apply_manual_command() {
 		}
 		else if (strRemoteCommand == "BALLAST_SETPOINTS") {
 
-			send_rf_comm("ballast setpoints: " + strRemoteParam);
+			//send_rf_comm("ballast setpoints: " + strRemoteParam);
 
 			double dblFwdPosSetpoint = get_sep_part_dbl(strRemoteParam, '|', 0);
 			double dblAftPosSetpoint = get_sep_part_dbl(strRemoteParam, '|', 1);

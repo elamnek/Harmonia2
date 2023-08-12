@@ -31,20 +31,25 @@
 #include "states\state_static_trim.h"
 
 //FSM states
-enum FSMState { IDLE, REMOTE, STATIC_TRIM, RUN, ALARM } fsm_state;
+enum FSMState { IDLE, REMOTE, STATIC_TRIM, RUN, ALARM, TEST } fsm_state;
 
 //function used to return text description of current state
 String  get_system_state() {
 	switch (fsm_state) {
 	case IDLE: return "IDLE";
 	case REMOTE: return "REMOTE";
-	case STATIC_TRIM: return "STATIC_TRIM";	
+	case STATIC_TRIM: return "STATIC_TRIM";
 	case RUN: return "RUN";
-	case ALARM: return "ALARM";}
+	case ALARM: return "ALARM";
+	case TEST: return "TEST";}
 	return "";
 }
 
+//polling timers
 int intStateTimerStart;
+int intBallastMotorTestTimerStart;
+
+int intBallastTestInc = 150;
 
 void setup() {
 	Serial.begin(9600);
@@ -81,8 +86,7 @@ void setup() {
 	send_rf_comm("Harmonia II is awake - stored time is: " + get_rtc_time());
 
 	intStateTimerStart = millis();
-
-
+	
 	fsm_state = IDLE;
 }
 
@@ -160,6 +164,11 @@ void loop() {
 
 		}	
 		if (strRemoteCommand == "ALARM") { fsm_state = ALARM; }
+		if (strRemoteCommand == "TEST") {
+			fsm_state = TEST;
+			intBallastMotorTestTimerStart = millis();
+			clear_rf_command();
+		}
 
 	}
 
@@ -243,6 +252,22 @@ void loop() {
 		//also clear the comms buffer so that any user command to idle state can be read
 		clear_rf_command();
 
+		break;
+
+	case TEST:
+
+	
+		int intTimeElapsed = millis() - intBallastMotorTestTimerStart;
+		if (intTimeElapsed > 5000) {
+
+			intBallastTestInc = -intBallastTestInc;
+			
+			ballast_setpoints(500 + intBallastTestInc, 500 + intBallastTestInc);
+
+
+			//reset timer
+			intBallastMotorTestTimerStart = millis();
+		}
 		break;
 	}
 

@@ -114,14 +114,14 @@ void ballast_adjust() {
 		}
 		break;
 	case BACKOFF:
-		//fwdBalSetpoint = 10;
+		fwdBalSetpoint = 10;
 		//if (dveInput > 0.15) {
 		fwdBalState = OPERATE;
 		//}
 		break;
 	case OPERATE:
 		fwdBalPID.Compute();
-		if (abs(fwdBalSetpoint - fwdBalInput) < 10) {
+		if (abs(fwdBalSetpoint - fwdBalInput) < 3) {
 			//BallastMC.setSpeed(fwdBalMC, 0);
 		}
 		else {
@@ -146,14 +146,14 @@ void ballast_adjust() {
 		}
 		break;
 	case BACKOFF:
-		//aftBalSetpoint = 10;
+		aftBalSetpoint = 10;
 		//if (dveInput > 0.15) {
 		aftBalState = OPERATE;
 		//}
 		break;
 	case OPERATE:
 		aftBalPID.Compute();
-		if (abs(aftBalSetpoint - aftBalInput) < 10) {
+		if (abs(aftBalSetpoint - aftBalInput) < 3) {
 			//BallastMC.setSpeed(aftBalMC, 0);
 		}
 		else {
