@@ -5,7 +5,7 @@
 */
 
 
-#include "helpers.h"
+#include <Servo.h>
 #include <PID_v1.h>
 #include <Motoron.h>
 #include <motoron_protocol.h>
@@ -27,8 +27,10 @@
 #include "comms\rf_comms.h"
 #include "data\sdcard.h"
 #include "control\syringe_ballast.h"
+#include "control\dive_plane.h"
 #include "states\state_manual.h"
 #include "states\state_static_trim.h"
+#include "helpers.h"
 
 //FSM states
 enum FSMState { IDLE, REMOTE, STATIC_TRIM, RUN, ALARM, TEST } fsm_state;

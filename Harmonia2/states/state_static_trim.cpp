@@ -14,7 +14,7 @@ double dveSetpoint, dveInput, dveOutput;
 double trmSetpoint, trmInput, trmOutput;
 
 double KpDve = 50, KiDve = 0, KdDve = 0;
-double KpTrm = 2, KiTrm = 5, KdTrm = 1; //initially 2
+double KpTrm = 2, KiTrm = 0, KdTrm = 0; //initially 2
 
 PID dvePID(&dveInput, &dveOutput, &dveSetpoint, KpDve, KiDve, KdDve, DIRECT);
 PID trmPID(&trmInput, &trmOutput, &trmSetpoint, KpTrm, KiTrm, KdTrm, DIRECT);

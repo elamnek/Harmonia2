@@ -1,6 +1,6 @@
-// 
-// 
-// 
+// controls dual syringe ballast system
+// uses PID controller for each syringe
+// 2 leonardo uCs are accessed via i2C - these supply the position of the plungers unsgin the encoders 
 
 #include "syringe_ballast.h"
 #include <Motoron.h>
@@ -9,22 +9,19 @@
 #include "..\comms\rf_comms.h"
 //https://playground.arduino.cc/Code/PIDLibaryBasicExample/
 
-
-//motor controller bays
+//motor controller channels
 #define fwdBalMC 1
 #define aftBalMC 2
 
-//i2C address
+//i2C addresses of each leanardo
 #define fwdBalAddr 10
 #define aftBalAddr 9
 
-
-
-MotoronI2C BallastMC;
+//create the motor controller object (controls both motors)
+MotoronI2C m_ballastMC;
 
 int m_intFwdMotorSpeed;
 int m_intAftMotorSpeed;
-
 
 //define the PIDs to drecctly control the position of the plungers
 //setpoints will be supplied to this module as an input
@@ -55,42 +52,40 @@ void ballast_init() {
 
 	Wire2.begin();
 
-	BallastMC.setAddress(12);
-	BallastMC.reinitialize();
-	BallastMC.clearResetFlag();
-	BallastMC.disableCrc();
+	m_ballastMC.setAddress(12);
+	m_ballastMC.reinitialize();
+	m_ballastMC.clearResetFlag();
+	m_ballastMC.disableCrc();
 	// Configure the Motoron to coast the motors while obeying
 	// decleration limits when there is an error (the default).
-	// BallastMC.setErrorResponse(MOTORON_ERROR_RESPONSE_COAST);
-	// BallastMC.setErrorMask(errorMask);
+	// m_ballastMC.setErrorResponse(MOTORON_ERROR_RESPONSE_COAST);
+	// m_ballastMC.setErrorMask(errorMask);
 
 	// Use a short command timeout of 100 ms: the Motoron will
 	// stop the motors if it does not get a command for 100 ms.
-	BallastMC.setCommandTimeoutMilliseconds(2000);
+	m_ballastMC.setCommandTimeoutMilliseconds(2000);
 
 	// Configure motor - Forward
-	BallastMC.setMaxAcceleration(fwdBalMC, 140);
-	BallastMC.setMaxDeceleration(fwdBalMC, 300);
+	m_ballastMC.setMaxAcceleration(fwdBalMC, 140);
+	m_ballastMC.setMaxDeceleration(fwdBalMC, 300);
 
 	// Configure motor - Aft
-	BallastMC.setMaxAcceleration(aftBalMC, 140);
-	BallastMC.setMaxDeceleration(aftBalMC, 300);
-	BallastMC.clearMotorFault();
+	m_ballastMC.setMaxAcceleration(aftBalMC, 140);
+	m_ballastMC.setMaxDeceleration(aftBalMC, 300);
+	m_ballastMC.clearMotorFault();
 	resetBallast();
 
 	fwdBalInput = -10;
 	aftBalInput = -10;
 
-	fwdBalPID.SetOutputLimits(-800, 800);
-	aftBalPID.SetOutputLimits(-800, 800);
+	fwdBalPID.SetOutputLimits(-1, 1);
+	aftBalPID.SetOutputLimits(-1, 1);
 
 	//turn the PIDs on
 	fwdBalPID.SetMode(AUTOMATIC);
 	aftBalPID.SetMode(AUTOMATIC);
 	
 }
-
-
 
 void ballast_adjust() {
 
@@ -105,11 +100,9 @@ void ballast_adjust() {
 	switch (fwdBalState) {
 	case INIT:
 		if (fwdBallastPos < 0) {
-			//BallastMC.setSpeed(fwdBalMC, -800);
 			m_intFwdMotorSpeed = -800;
 		}
 		else {
-			//BallastMC.setSpeed(fwdBalMC, 0);
 			fwdBalState = BACKOFF;
 		}
 		break;
@@ -121,27 +114,19 @@ void ballast_adjust() {
 		break;
 	case OPERATE:
 		fwdBalPID.Compute();
-		if (abs(fwdBalSetpoint - fwdBalInput) < 3) {
-			//BallastMC.setSpeed(fwdBalMC, 0);
-		}
-		else {
-			//BallastMC.setSpeed(fwdBalMC, fwdBalOutput * 800 / 255);
-			m_intFwdMotorSpeed = fwdBalOutput * 800 / 255;
+		if (abs(fwdBalSetpoint - fwdBalInput) > 3) {
+			m_intFwdMotorSpeed = fwdBalOutput * 800/2;
 		}
 		break;
 	}
-	BallastMC.setSpeed(fwdBalMC, m_intFwdMotorSpeed);
+	m_ballastMC.setSpeed(fwdBalMC, m_intFwdMotorSpeed);
 
-
-	
 	switch (aftBalState) {
 	case INIT:
 		if (aftBallastPos < 0) {
-			//BallastMC.setSpeed(aftBalMC, -800);
 			m_intAftMotorSpeed = -800;
 		}
 		else {
-			//BallastMC.setSpeed(aftBalMC, 0);
 			aftBalState = BACKOFF;
 		}
 		break;
@@ -153,16 +138,12 @@ void ballast_adjust() {
 		break;
 	case OPERATE:
 		aftBalPID.Compute();
-		if (abs(aftBalSetpoint - aftBalInput) < 3) {
-			//BallastMC.setSpeed(aftBalMC, 0);
-		}
-		else {
-			//BallastMC.setSpeed(aftBalMC, aftBalOutput * 800 / 255);
-			m_intAftMotorSpeed = aftBalOutput * 800 / 255;
+		if (abs(aftBalSetpoint - aftBalInput) > 3) {
+			m_intAftMotorSpeed = aftBalOutput * 800/2;
 		}
 		break;
 	}
-	BallastMC.setSpeed(aftBalMC, m_intAftMotorSpeed);
+	m_ballastMC.setSpeed(aftBalMC, m_intAftMotorSpeed);
 	
 }
 
@@ -187,11 +168,11 @@ void command_ballast(String strCommand, int intValue) {
 
 	if (strCommand == "FWD_BALLAST") {
 		m_intFwdMotorSpeed = intValue;
-		BallastMC.setSpeed(fwdBalMC, intValue);
+		m_ballastMC.setSpeed(fwdBalMC, intValue);
 	}
 	else if (strCommand == "AFT_BALLAST") {
 		m_intAftMotorSpeed = intValue;
-		BallastMC.setSpeed(aftBalMC, intValue);
+		m_ballastMC.setSpeed(aftBalMC, intValue);
 	}	
 }
 
@@ -221,6 +202,7 @@ void resetBallast(void) {
 	Wire2.endTransmission();
 	delay(200);
 }
+//reads position of plunger from encoder (via leonardo)
 int32_t readBallastPos(int BalAddr) {
 	int i = 0;
 	int32_t val = 0;
