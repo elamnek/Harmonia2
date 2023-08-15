@@ -28,7 +28,7 @@ typedef struct {
 	float depth;
 	float xPos;
 
-	float balPos[2];
+	int balPos[2];
 	float balMotorTemp[2];
 	int balMotorSpeed[2];
 	float internalTemp;

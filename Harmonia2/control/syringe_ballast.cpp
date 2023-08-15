@@ -115,7 +115,7 @@ void ballast_adjust() {
 	case OPERATE:
 		fwdBalPID.Compute();
 		if (abs(fwdBalSetpoint - fwdBalInput) > 3) {
-			m_intFwdMotorSpeed = fwdBalOutput * 800/2;
+			m_intFwdMotorSpeed = fwdBalOutput * 800;
 		}
 		break;
 	}
@@ -139,7 +139,7 @@ void ballast_adjust() {
 	case OPERATE:
 		aftBalPID.Compute();
 		if (abs(aftBalSetpoint - aftBalInput) > 3) {
-			m_intAftMotorSpeed = aftBalOutput * 800/2;
+			m_intAftMotorSpeed = aftBalOutput * 800;
 		}
 		break;
 	}
