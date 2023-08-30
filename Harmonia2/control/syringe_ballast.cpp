@@ -6,8 +6,10 @@
 #include <Motoron.h>
 #include <motoron_protocol.h>
 #include <PID_v1.h>
-#include "..\comms\rf_comms.h"
 //https://playground.arduino.cc/Code/PIDLibaryBasicExample/
+#include "..\comms\rf_comms.h"
+#include "..\sensors\temp_sensors.h"
+
 
 //motor controller channels
 #define fwdBalMC 1
@@ -35,9 +37,6 @@ PID aftBalPID(&aftBalInput, &aftBalOutput, &aftBalSetpoint, KpBal, KiBal, KdBal,
 
 boolean m_blnFwdInitialising;
 boolean m_blnAftInitialising;
-
-//enum fwdBalState { INIT, BACKOFF, OPERATE} fwd_bal_state;
-//enum aftBalState { INIT, BACKOFF, OPERATE } aft_bal_state;
 
 typedef enum {
 	INIT,
@@ -89,6 +88,10 @@ void ballast_init() {
 
 void ballast_adjust() {
 
+	//check temps
+	double dblFwdTemp = read_fwd_temp();
+	double dblAftTemp = read_aft_temp();
+
 	int32_t fwdBallastPos = readBallastPos(fwdBalAddr);
 	int32_t aftBallastPos = readBallastPos(aftBalAddr);
 	fwdBalInput = fwdBallastPos;
@@ -97,52 +100,62 @@ void ballast_adjust() {
 	m_intFwdMotorSpeed = 0;
 	m_intAftMotorSpeed = 0;
 
-	switch (fwdBalState) {
-	case INIT:
-		if (fwdBallastPos < 0) {
-			m_intFwdMotorSpeed = -800;
-		}
-		else {
-			fwdBalState = BACKOFF;
-		}
-		break;
-	case BACKOFF:
-		fwdBalSetpoint = 10;
-		//if (dveInput > 0.15) {
-		fwdBalState = OPERATE;
-		//}
-		break;
-	case OPERATE:
-		fwdBalPID.Compute();
-		if (abs(fwdBalSetpoint - fwdBalInput) > 3) {
-			m_intFwdMotorSpeed = fwdBalOutput * 800;
-		}
-		break;
+	//check for fault state
+	//needs to stay in fault state if any of the conditions are true
+	if (dblFwdTemp > 75 || dblAftTemp > 75 || fwdBallastPos == -10000 || aftBallastPos == -10000) {
+		m_intFwdMotorSpeed = 0;
+		m_intAftMotorSpeed = 0;
 	}
-	m_ballastMC.setSpeed(fwdBalMC, m_intFwdMotorSpeed);
+	else {
 
-	switch (aftBalState) {
-	case INIT:
-		if (aftBallastPos < 0) {
-			m_intAftMotorSpeed = -800;
+		switch (fwdBalState) {
+		case INIT:
+			if (fwdBallastPos < 0) {
+				m_intFwdMotorSpeed = -800;
+			}
+			else {
+				fwdBalState = BACKOFF;
+			}
+			break;
+		case BACKOFF:
+			fwdBalSetpoint = 10;
+			//if (dveInput > 0.15) {
+			fwdBalState = OPERATE;
+			//}
+			break;
+		case OPERATE:
+			fwdBalPID.Compute();
+			if (abs(fwdBalSetpoint - fwdBalInput) > 3) {
+				m_intFwdMotorSpeed = fwdBalOutput * 800;
+			}
+			break;
 		}
-		else {
-			aftBalState = BACKOFF;
+
+		switch (aftBalState) {
+		case INIT:
+			if (aftBallastPos < 0) {
+				m_intAftMotorSpeed = -800;
+			}
+			else {
+				aftBalState = BACKOFF;
+			}
+			break;
+		case BACKOFF:
+			aftBalSetpoint = 10;
+			//if (dveInput > 0.15) {
+			aftBalState = OPERATE;
+			//}
+			break;
+		case OPERATE:
+			aftBalPID.Compute();
+			if (abs(aftBalSetpoint - aftBalInput) > 3) {
+				m_intAftMotorSpeed = aftBalOutput * 800;
+			}
+			break;
 		}
-		break;
-	case BACKOFF:
-		aftBalSetpoint = 10;
-		//if (dveInput > 0.15) {
-		aftBalState = OPERATE;
-		//}
-		break;
-	case OPERATE:
-		aftBalPID.Compute();
-		if (abs(aftBalSetpoint - aftBalInput) > 3) {
-			m_intAftMotorSpeed = aftBalOutput * 800;
-		}
-		break;
 	}
+	
+	m_ballastMC.setSpeed(fwdBalMC, m_intFwdMotorSpeed);
 	m_ballastMC.setSpeed(aftBalMC, m_intAftMotorSpeed);
 	
 }

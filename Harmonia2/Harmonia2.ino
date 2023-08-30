@@ -87,9 +87,14 @@ void setup() {
 
 	send_rf_comm("Harmonia II is awake - stored time is: " + get_rtc_time());
 
+	scan_i2c_wire(0);
+	scan_i2c_wire(1);
+	scan_i2c_wire(2);
+
 	intStateTimerStart = millis();
 	
 	fsm_state = IDLE;
+
 }
 
 void loop() {
@@ -275,3 +280,55 @@ void loop() {
 
 
 }
+
+void scan_i2c_wire(int intWireNum) {
+
+	byte error, address; //variable for error and I2C address
+	int nDevices;
+
+	send_rf_comm("Scanning I2C on wire " + String(intWireNum));
+
+	nDevices = 0;
+	for (address = 1; address < 127; address++)
+	{
+		// The i2c_scanner uses the return value of
+		// the Write.endTransmisstion to see if
+		// a device did acknowledge to the address.
+
+		if (intWireNum == 0) {
+			Wire.beginTransmission(address);
+			error = Wire.endTransmission();
+		}
+		else if (intWireNum == 1) {
+			Wire1.beginTransmission(address);
+			error = Wire1.endTransmission();
+		}
+		else if (intWireNum == 2) {
+			Wire2.beginTransmission(address);
+			error = Wire2.endTransmission();
+		}
+
+		if (error == 0)
+		{
+			nDevices++;			
+			send_rf_comm(FormatMsg(address, "I2C device found"));
+
+		}
+		else if (error == 4)
+		{		
+			send_rf_comm(FormatMsg(address, "Unknown error"));
+		}
+	}
+	if (nDevices == 0)
+		send_rf_comm("No I2C devices found");
+	else
+		send_rf_comm("done");
+
+}
+String FormatMsg(byte address,String strPrefix) {
+	String strMsg = strPrefix + " at address 0x";
+	if (address < 16) { strMsg = strMsg + "0"; }
+	strMsg = strMsg + String(address, HEX);
+	return strMsg;
+}
+
