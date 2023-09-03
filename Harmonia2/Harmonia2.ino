@@ -4,7 +4,6 @@
  Author:	eugene lamnek
 */
 
-
 #include <Servo.h>
 #include <PID_v1.h>
 #include <Motoron.h>
@@ -28,6 +27,7 @@
 #include "data\sdcard.h"
 #include "control\syringe_ballast.h"
 #include "control\dive_plane.h"
+#include "control\aft_section.h"
 #include "states\state_manual.h"
 #include "states\state_static_trim.h"
 #include "helpers.h"
@@ -56,10 +56,16 @@ int intBallastTestInc = 150;
 void setup() {
 	Serial.begin(9600);
 	
+	//all three i2C buses used
+	Wire.begin();  //ballast motor control
+	Wire1.begin(); //aft section
+	Wire2.begin(); //ballast encoders
+
 	init_rf_comms();
 	init_watersensors();
 	init_rtc();
 	ballast_init();
+	aft_section_init();
 
 	String strMsg = init_sdcard();
 	if (strMsg.length() > 0) {
@@ -312,17 +318,19 @@ void scan_i2c_wire(int intWireNum) {
 		{
 			nDevices++;			
 			send_rf_comm(FormatMsg(address, "I2C device found"));
-
 		}
 		else if (error == 4)
 		{		
 			send_rf_comm(FormatMsg(address, "Unknown error"));
 		}
 	}
-	if (nDevices == 0)
+	if (nDevices == 0) {
 		send_rf_comm("No I2C devices found");
-	else
+	}
+	else 
+	{
 		send_rf_comm("done");
+	}
 
 }
 String FormatMsg(byte address,String strPrefix) {

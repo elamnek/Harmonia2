@@ -1,6 +1,6 @@
 // controls dual syringe ballast system
 // uses PID controller for each syringe
-// 2 leonardo uCs are accessed via i2C - these supply the position of the plungers unsgin the encoders 
+// 2 leonardo uCs are accessed via i2C - these supply the position of the plungers unsing the encoders 
 
 #include "syringe_ballast.h"
 #include <Motoron.h>
@@ -49,7 +49,7 @@ balState_t aftBalState = INIT;
 
 void ballast_init() {
 
-	Wire2.begin();
+	//Wire2.begin();
 
 	m_ballastMC.setAddress(12);
 	m_ballastMC.reinitialize();

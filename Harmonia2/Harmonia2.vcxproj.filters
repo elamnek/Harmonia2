@@ -60,6 +60,9 @@
     <ClCompile Include="control\dive_plane.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="control\aft_section.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="__vm\.Harmonia2.vsarduino.h">
@@ -99,6 +102,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="control\dive_plane.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="control\aft_section.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
