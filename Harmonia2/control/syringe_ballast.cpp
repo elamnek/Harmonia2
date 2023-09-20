@@ -49,7 +49,7 @@ balState_t aftBalState = INIT;
 
 void ballast_init() {
 
-	//Wire2.begin();
+	//Wire1.begin();
 
 	m_ballastMC.setAddress(12);
 	m_ballastMC.reinitialize();
@@ -206,13 +206,13 @@ int32_t read_aft_ballast_pos() {
 
 //sends a reset command (*R) to both leonardos to tell them to set positions to -100
 void resetBallast(void) {
-	Wire2.beginTransmission(fwdBalAddr);
-	Wire2.write("*R");
-	Wire2.endTransmission();
+	Wire1.beginTransmission(fwdBalAddr);
+	Wire1.write("*R");
+	Wire1.endTransmission();
 	delay(200);
-	Wire2.beginTransmission(aftBalAddr);
-	Wire2.write("*R");
-	Wire2.endTransmission();
+	Wire1.beginTransmission(aftBalAddr);
+	Wire1.write("*R");
+	Wire1.endTransmission();
 	delay(200);
 }
 //reads position of plunger from encoder (via leonardo)
@@ -220,10 +220,10 @@ int32_t readBallastPos(int BalAddr) {
 	int i = 0;
 	int32_t val = 0;
 	bool blnSendStop = true;
-	Wire2.requestFrom(BalAddr, 4, blnSendStop);
-	if (Wire2.available() > 0) {
-		while (Wire2.available() > 0) {  // slave may send less than requested
-			val += Wire2.read() << (8 * i);
+	Wire1.requestFrom(BalAddr, 4, blnSendStop);
+	if (Wire1.available() > 0) {
+		while (Wire1.available() > 0) {  // slave may send less than requested
+			val += Wire1.read() << (8 * i);
 			i++;
 		}
 		return val;
