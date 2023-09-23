@@ -9,8 +9,9 @@
 	#include "WProgram.h"
 #endif
 
+void dive_plane_init();
 
-
+void dive_plane_adjust();
 
 
 #endif

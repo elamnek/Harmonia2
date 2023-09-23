@@ -66,6 +66,7 @@ void setup() {
 	init_rtc();
 	ballast_init();
 	aft_section_init();
+	dive_plane_init();
 
 	String strMsg = init_sdcard();
 	if (strMsg.length() > 0) {
