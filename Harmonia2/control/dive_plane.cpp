@@ -37,7 +37,7 @@ void dive_plane_init() {
 
 void dive_plane_adjust() {
 
-	dpInput = analogRead(m_intDivePlaneInputPin) * 270.0 / 1023.0;
+	dpInput = analogRead(m_intDivePlaneInputPin) * 270.0 / 1023.0; //converts pot output to be 0-180
 
 	dpPID.Compute();
 
