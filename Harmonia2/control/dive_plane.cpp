@@ -21,18 +21,21 @@ PID dpPID(&dpInput, &dpOutput, &dpSetpoint, KpDP, KiDP, KdDP, DIRECT);
 
 void dive_plane_init() {
 
-	
-
-	dpSetpoint = 135;
-	// setpointDiff = 1;
+	dpSetpoint = 90;	
 	
 	dpPID.SetOutputLimits(-1000, 1000);
-	
-	//turn the PID on
+	dpPID.SetControllerDirection(REVERSE);
 	dpPID.SetMode(AUTOMATIC);
 
 	m_dpServo.attach(m_intDivePlaneOutputPin);
 
+}
+
+void diveplane_setpoint(double fwdDPSetpoint) {
+	dpSetpoint = fwdDPSetpoint;
+}
+float get_diveplane_pot() {
+	return dpInput;
 }
 
 void dive_plane_adjust() {
@@ -41,19 +44,19 @@ void dive_plane_adjust() {
 
 	dpPID.Compute();
 
-	if (abs(dpSetpoint - dpInput) < 2.2) {
-		dpcommand = 1500;
+	if (dpOutput < 0) {
+		dpOutput = min(-CENTRE_RANGE, dpOutput);
 	}
 	else {
-		if (dpOutput < 0) {
-			dpcommand = 1500 + dpOutput - CENTRE_RANGE;
-		}
-		else {
-			dpcommand = 1500 + dpOutput + CENTRE_RANGE;
-		}
+		dpOutput = max(dpOutput, CENTRE_RANGE);
 	}
 
-	m_dpServo.writeMicroseconds(dpcommand);
+	if (abs(dpSetpoint - dpInput) < 5) {
+		m_dpServo.writeMicroseconds(1500);
+	}
+	else {
+		m_dpServo.writeMicroseconds(-dpOutput + 1500);
+	}
 
 }
 

@@ -107,6 +107,7 @@ void setup() {
 void loop() {
 
 	ballast_adjust();
+	dive_plane_adjust();
   
 	//do state data write/send here...
 	int intStateTimeElapsed = millis() - intStateTimerStart;
@@ -135,9 +136,10 @@ void loop() {
 		systemState.acceleration[1] = get_imuacceleration_y();
 		systemState.acceleration[2] = get_imuacceleration_z();
 		systemState.internalTemp = read_imu_temp();
+		systemState.dpPos = get_diveplane_pot();
 		
 		//log to sdcard and retrieve the logged string
-		String strLogLine = sdcard_logState(&systemState, LOG_ATTITUDE + LOG_ACCELERATION + LOG_BALLAST + LOG_DEPTH);
+		String strLogLine = sdcard_logState(&systemState, LOG_ATTITUDE + LOG_ACCELERATION + LOG_BALLAST + LOG_DEPTH + LOG_SURFACES);
 		send_rf_comm(strLogLine);
 
 		//reset timer

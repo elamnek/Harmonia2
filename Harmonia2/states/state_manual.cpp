@@ -6,6 +6,7 @@
 #include "..\comms\rf_comms.h"
 #include "..\control\syringe_ballast.h"
 #include "..\control\aft_section.h"
+#include "..\control\dive_plane.h"
 #include "..\helpers.h"
 
 void apply_manual_command() {
@@ -41,6 +42,11 @@ void apply_manual_command() {
 			byte dataSetpoints[4] = { get_sep_part(strRemoteParam, '|', 0) ,get_sep_part(strRemoteParam, '|', 1) ,get_sep_part(strRemoteParam, '|', 2) ,get_sep_part(strRemoteParam, '|', 3) };
 
 			aft_setpoints(dataSetpoints);
+
+		}
+		else if (strRemoteCommand == "DIVEPLANE_SETPOINT") {
+
+			diveplane_setpoint(strRemoteParam.toInt());
 
 		}
 		
