@@ -35,12 +35,12 @@ void diveplane_setpoint(double fwdDPSetpoint) {
 	dpSetpoint = fwdDPSetpoint;
 }
 float get_diveplane_pot() {
-	return dpInput;
+	return analogRead(m_intDivePlaneInputPin) * 155.0 / 1023.0;
 }
 
 void dive_plane_adjust() {
 
-	dpInput = analogRead(m_intDivePlaneInputPin) * 270.0 / 1023.0; //converts pot output to be 0-180
+	dpInput = analogRead(m_intDivePlaneInputPin) * 155.0 / 1023.0; //converts pot output to be 0-180
 
 	dpPID.Compute();
 
@@ -51,7 +51,7 @@ void dive_plane_adjust() {
 		dpOutput = max(dpOutput, CENTRE_RANGE);
 	}
 
-	if (abs(dpSetpoint - dpInput) < 5) {
+	if (abs(dpSetpoint - dpInput) < 1) {
 		m_dpServo.writeMicroseconds(1500);
 	}
 	else {
