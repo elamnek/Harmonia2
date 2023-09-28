@@ -28,6 +28,7 @@
 #include "control\syringe_ballast.h"
 #include "control\dive_plane.h"
 #include "control\aft_section.h"
+#include "control\main_motor.h"
 #include "states\state_manual.h"
 #include "states\state_static_trim.h"
 #include "helpers.h"
@@ -67,6 +68,7 @@ void setup() {
 	ballast_init();
 	aft_section_init();
 	dive_plane_init();
+	init_main_motor();
 
 	String strMsg = init_sdcard();
 	if (strMsg.length() > 0) {
@@ -137,9 +139,11 @@ void loop() {
 		systemState.acceleration[2] = get_imuacceleration_z();
 		systemState.internalTemp = read_imu_temp();
 		systemState.dpPos = get_diveplane_pot();
+		systemState.motorTh = get_main_motor_throttle();
 		
 		//log to sdcard and retrieve the logged string
-		String strLogLine = sdcard_logState(&systemState, LOG_ATTITUDE + LOG_ACCELERATION + LOG_BALLAST + LOG_DEPTH + LOG_SURFACES);
+		String strLogLine = sdcard_logState(&systemState, LOG_ATTITUDE + LOG_ACCELERATION + LOG_BALLAST + LOG_DEPTH + LOG_SURFACES + LOG_MOTOR);
+
 		send_rf_comm(strLogLine);
 
 		//reset timer

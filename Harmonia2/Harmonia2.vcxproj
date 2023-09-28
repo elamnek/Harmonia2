@@ -84,6 +84,7 @@
     <ClCompile Include="comms\rf_comms.cpp" />
     <ClCompile Include="control\dive_plane.cpp" />
     <ClCompile Include="helpers.cpp" />
+    <ClCompile Include="control\main_motor.cpp" />
     <ClCompile Include="sensors\depth_sensor.cpp" />
     <ClCompile Include="Harmonia2.ino">
       <FileType>CppCode</FileType>
@@ -111,6 +112,7 @@
     <ClInclude Include="data\sdcard.h" />
     <ClInclude Include="control\dive_plane.h" />
     <ClInclude Include="helpers.h" />
+    <ClInclude Include="control\main_motor.h" />
     <ClInclude Include="sensors\depth_sensor.h" />
     <ClInclude Include="sensors\RTC.h" />
     <ClInclude Include="sensors\IMU.h" />

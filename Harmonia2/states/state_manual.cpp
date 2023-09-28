@@ -7,6 +7,7 @@
 #include "..\control\syringe_ballast.h"
 #include "..\control\aft_section.h"
 #include "..\control\dive_plane.h"
+#include "..\control\main_motor.h"
 #include "..\helpers.h"
 
 void apply_manual_command() {
@@ -48,6 +49,9 @@ void apply_manual_command() {
 
 			diveplane_setpoint(strRemoteParam.toInt());
 
+		}
+		else if (strRemoteCommand == "MAIN_MOTOR") {
+			commmand_main_motor(strRemoteParam.toInt());
 		}
 		
 	}

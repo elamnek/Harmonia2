@@ -63,6 +63,9 @@
     <ClCompile Include="control\aft_section.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="control\main_motor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="__vm\.Harmonia2.vsarduino.h">
@@ -105,6 +108,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="control\aft_section.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="control\main_motor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
