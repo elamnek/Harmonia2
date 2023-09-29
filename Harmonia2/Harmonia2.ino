@@ -4,8 +4,7 @@
  Author:	eugene lamnek
 */
 
-#include <DFRobot_INA219.h>
-#include "power_sensor.h"
+
 #include <Servo.h>
 #include <PID_v1.h>
 #include <Motoron.h>
@@ -25,6 +24,7 @@
 #include "sensors\temp_sensors.h"
 #include "sensors\IMU.h"
 #include "sensors\RTC.h"
+#include "sensors\power_sensor.h"
 #include "comms\rf_comms.h"
 #include "data\sdcard.h"
 #include "control\syringe_ballast.h"
@@ -72,7 +72,15 @@ void setup() {
 	dive_plane_init();
 	init_main_motor();
 
-	String strMsg = init_sdcard();
+	String strMsg = init_powersensor();
+	if (strMsg.length() > 0) {
+		send_rf_comm(strMsg);
+	}
+	else {
+		send_rf_comm("Power sensor OK!!");
+	}
+	
+	strMsg = init_sdcard();
 	if (strMsg.length() > 0) {
 		send_rf_comm(strMsg);
 	}
@@ -107,13 +115,11 @@ void setup() {
 	fsm_state = IDLE;
 
 }
-
+	
 void loop() {
 
 	ballast_adjust();
-	dive_plane_adjust();
-  
-	//do state data write/send here...
+	dive_plane_adjust(); 
 	int intStateTimeElapsed = millis() - intStateTimerStart;
 	if (intStateTimeElapsed > 1000) {
 
@@ -142,7 +148,9 @@ void loop() {
 		systemState.internalTemp = read_imu_temp();
 		systemState.dpPos = get_diveplane_pot();
 		systemState.motorTh = get_main_motor_throttle();
-		
+		systemState.motorVolt = get_bus_voltage();
+		systemState.motorCurr = get_current_mA();
+
 		//log to sdcard and retrieve the logged string
 		String strLogLine = sdcard_logState(&systemState, LOG_ATTITUDE + LOG_ACCELERATION + LOG_BALLAST + LOG_DEPTH + LOG_SURFACES + LOG_MOTOR);
 

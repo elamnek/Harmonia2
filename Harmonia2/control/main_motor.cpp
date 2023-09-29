@@ -3,8 +3,9 @@
 // 
 
 #include "main_motor.h"
-
 #include <Motoron.h>
+#include <motoron_protocol.h>
+
 
 MotoronI2C mc(0x10);
 
