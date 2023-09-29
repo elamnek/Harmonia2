@@ -4,6 +4,8 @@
  Author:	eugene lamnek
 */
 
+#include <DFRobot_INA219.h>
+#include "power_sensor.h"
 #include <Servo.h>
 #include <PID_v1.h>
 #include <Motoron.h>
