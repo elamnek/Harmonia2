@@ -1,6 +1,6 @@
 // controls dual syringe ballast system
 // uses PID controller for each syringe
-// 2 leonardo uCs are accessed via i2C - these supply the position of the plungers unsing the encoders 
+// 2 leonardo uCs are accessed via i2C - these supply the position of the plungers using the encoders 
 
 #include "syringe_ballast.h"
 #include <Motoron.h>

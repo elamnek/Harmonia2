@@ -3,6 +3,7 @@
 // 
 
 #include "RPM.h"
+#include <Wire.h>
 
 //i2C address of RPM leanardo
 #define rpmAddr 12
@@ -10,15 +11,15 @@
 
 
 void rpm_init() {
-
+	Wire1.begin();
 }
 
-void read_rpm() {
-
+float read_rpm() {
+	return readRPM();
 }
 
 
-int32_t readRPM(int BalAddr) {
+int32_t readRPM() {
 	int i = 0;
 	int32_t val = 0;
 	bool blnSendStop = true;

@@ -5,7 +5,7 @@
 */
 
 
-#include "RPM.h"
+
 #include <Servo.h>
 #include <PID_v1.h>
 #include <Motoron.h>
@@ -20,6 +20,7 @@
 #include <DS1307RTC.h>
 
 //harmonia libraries
+#include "sensors\RPM.h"
 #include "sensors\depth_sensor.h"
 #include "sensors\water_sensors.h"
 #include "sensors\temp_sensors.h"
@@ -149,6 +150,7 @@ void loop() {
 		systemState.internalTemp = read_imu_temp();
 		systemState.dpPos = get_diveplane_pot();
 		systemState.motorTh = get_main_motor_throttle();
+		systemState.mototRPM = read_rpm();
 		systemState.motorVolt = get_bus_voltage();
 		systemState.motorCurr = get_current_mA();
 

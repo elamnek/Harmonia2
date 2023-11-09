@@ -9,6 +9,11 @@
 	#include "WProgram.h"
 #endif
 
+void rpm_init();
+
+float read_rpm();
+
+int32_t readRPM();
 
 #endif
 
