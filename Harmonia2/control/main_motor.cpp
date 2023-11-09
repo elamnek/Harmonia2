@@ -39,7 +39,9 @@ void commmand_main_motor(int intValue) {
 	m_intThrottle = intValue;
 	//main motor throttle commands should always use the scale -800 to + 800 where 0 is motor off
 
-	mc.setSpeed(1, intValue);
+	//mc.setSpeed(1, intValue);
+
+	mc.setAllSpeeds(intValue);
 
 }
 

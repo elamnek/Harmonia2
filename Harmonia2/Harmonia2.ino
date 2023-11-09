@@ -5,6 +5,7 @@
 */
 
 
+#include "RPM.h"
 #include <Servo.h>
 #include <PID_v1.h>
 #include <Motoron.h>
