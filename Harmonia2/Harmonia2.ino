@@ -123,7 +123,7 @@ void loop() {
 	ballast_adjust();
 	dive_plane_adjust(); 
 	int intStateTimeElapsed = millis() - intStateTimerStart;
-	if (intStateTimeElapsed > 1000) {
+	if (intStateTimeElapsed > 1000 && fsm_state != REMOTE) {
 
 		//refresh IMU data
 		read_imu();
@@ -175,7 +175,7 @@ void loop() {
 	//set state using commands from remote
 	String strRemoteCommand = get_remote_command();
 	//send_rf_comm("remote command received: " + strRemoteCommand);
-
+	
 	if (fsm_state == ALARM) {
 		//system in alarm state - can only be changed by command to go to idle state
 		if (strRemoteCommand == "IDLE") { fsm_state = IDLE; }
