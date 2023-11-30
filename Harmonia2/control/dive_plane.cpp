@@ -14,7 +14,8 @@ Servo m_dpServo;
 
 #define CENTRE_RANGE 0
 
-double KpDP = 25, KiDP = 6, KdDP = 0.1;
+//double KpDP = 25, KiDP = 6, KdDP = 0.1;
+double KpDP = 2, KiDP = 5, KdDP = 1;
 double dpSetpoint, dpInput, dpOutput;
 int dpcommand = 1500;
 PID dpPID(&dpInput, &dpOutput, &dpSetpoint, KpDP, KiDP, KdDP, DIRECT);
