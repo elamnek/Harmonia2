@@ -123,7 +123,9 @@ void loop() {
 	ballast_adjust();
 	dive_plane_adjust(); 
 	int intStateTimeElapsed = millis() - intStateTimerStart;
-	if (intStateTimeElapsed > 1000 && fsm_state != REMOTE) {
+	if (intStateTimeElapsed > 1000 ) {
+
+		//&& fsm_state != REMOTE
 
 		//refresh IMU data
 		read_imu();

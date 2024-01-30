@@ -42,7 +42,7 @@ void init_static_trim(double dblDepthSetpoint,double dblTrimSetpoint) {
 void adjust_trim() {
 	
 	//compute PIDs with latest inputs
-	dveInput = 0; //get_depth();
+	dveInput = get_depth();
 	dvePID.Compute();
 	
 	trmInput = -read_imu_pitch();
@@ -60,7 +60,6 @@ void adjust_trim() {
 
 	ballast_setpoints(fwdSetpoint, aftSetpoint);
 	
-
 	dblPrevFwdSetpoint = fwdSetpoint;
 	dblPrevAftSetpoint = aftSetpoint;
 
