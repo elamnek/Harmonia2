@@ -5,6 +5,7 @@
 #include "state_static_trim.h"
 #include "..\control\syringe_ballast.h"
 #include "..\sensors\IMU.h"
+#include "..\sensors\depth_sensor.h"
 
 #include <PID_v1.h>
 //https://playground.arduino.cc/Code/PIDLibaryBasicExample/
@@ -34,8 +35,8 @@ void init_static_trim(double dblDepthSetpoint,double dblTrimSetpoint) {
 	dvePID.SetMode(AUTOMATIC);
 	trmPID.SetMode(AUTOMATIC);
 
-	dblPrevFwdSetpoint = 1550;
-	dblPrevAftSetpoint = 900;
+	dblPrevFwdSetpoint = 700;
+	dblPrevAftSetpoint = 700;
 
 }
 
