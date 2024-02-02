@@ -6,6 +6,7 @@
 #include "..\control\syringe_ballast.h"
 #include "..\sensors\IMU.h"
 #include "..\sensors\depth_sensor.h"
+#include "..\helpers.h"
 
 #include <PID_v1.h>
 //https://playground.arduino.cc/Code/PIDLibaryBasicExample/
@@ -14,8 +15,8 @@
 double dveSetpoint, dveInput, dveOutput;
 double trmSetpoint, trmInput, trmOutput;
 
-double KpDve = 50, KiDve = 0, KdDve = 0;
-double KpTrm = 2, KiTrm = 0, KdTrm = 0; //initially 2
+double KpDve = 50, KiDve = 1, KdDve = 1;
+double KpTrm = 2, KiTrm = 1, KdTrm = 1; //initially 2
 
 PID dvePID(&dveInput, &dveOutput, &dveSetpoint, KpDve, KiDve, KdDve, DIRECT);
 PID trmPID(&trmInput, &trmOutput, &trmSetpoint, KpTrm, KiTrm, KdTrm, DIRECT);
@@ -23,10 +24,20 @@ PID trmPID(&trmInput, &trmOutput, &trmSetpoint, KpTrm, KiTrm, KdTrm, DIRECT);
 double dblPrevFwdSetpoint;
 double dblPrevAftSetpoint;
 
-void init_static_trim(double dblDepthSetpoint,double dblTrimSetpoint) {
+void init_static_trim(String strRemoteParam) {
+
+	dveSetpoint = get_sep_part_dbl(strRemoteParam, '|', 0);
+	trmSetpoint = get_sep_part_dbl(strRemoteParam, '|', 1);
+	KpDve = get_sep_part_dbl(strRemoteParam, '|', 2);
+	KiDve = get_sep_part_dbl(strRemoteParam, '|', 3);
+	KdDve = get_sep_part_dbl(strRemoteParam, '|', 4);
+	KpTrm = get_sep_part_dbl(strRemoteParam, '|', 5);
+	KiTrm = get_sep_part_dbl(strRemoteParam, '|', 6);
+	KdTrm = get_sep_part_dbl(strRemoteParam, '|', 7);
+
 	
-	dveSetpoint = dblDepthSetpoint;
-	trmSetpoint = dblTrimSetpoint;
+	/*dveSetpoint = dblDepthSetpoint;
+	trmSetpoint = dblTrimSetpoint;*/
 	
 	dvePID.SetOutputLimits(-500, 500);
 	trmPID.SetOutputLimits(-200, 200);
@@ -52,6 +63,7 @@ void adjust_trim() {
 	//calc new ballast setpoints
 
 	Serial.println(String(trmInput) + "," + String(trmOutput) + "," + String(dveOutput));
+	Serial.println(String(KpDve) + "," + String(KpTrm));
 
 	double fwdSetpoint = max(min(dblPrevFwdSetpoint + (dveOutput + trmOutput) / 2, BALLAST_MAX), BALLAST_MIN);
 	double aftSetpoint = max(min(dblPrevAftSetpoint + (dveOutput - trmOutput) / 2, BALLAST_MAX), BALLAST_MIN);

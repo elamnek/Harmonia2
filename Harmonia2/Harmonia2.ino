@@ -188,7 +188,7 @@ void loop() {
 		if (strRemoteCommand == "REMOTE") { fsm_state = REMOTE; }
 		if (strRemoteCommand == "STATIC_TRIM") {
 			fsm_state = STATIC_TRIM;
-			init_static_trim(get_remote_param().toFloat(), 0);
+			init_static_trim(get_remote_param());
 			clear_rf_command();
 		}
 		if (strRemoteCommand == "RUN") {

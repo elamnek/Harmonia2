@@ -9,7 +9,9 @@
 	#include "WProgram.h"
 #endif
 
-void init_static_trim(double dblDepthSetpoint, double dblTrimSetpoint);
+//void init_static_trim(double dblDepthSetpoint, double dblTrimSetpoint);
+void init_static_trim(String strRemoteParam);
+
 
 void adjust_trim();
 
