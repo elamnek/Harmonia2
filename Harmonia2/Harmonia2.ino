@@ -70,9 +70,9 @@ void setup() {
 	init_watersensors();
 	init_rtc();
 	ballast_init();
-	aft_section_init();
-	dive_plane_init();
-	init_main_motor();
+	//aft_section_init();
+	//dive_plane_init();
+	//init_main_motor();
 
 	String strMsg = init_powersensor();
 	if (strMsg.length() > 0) {
@@ -120,46 +120,69 @@ void setup() {
 	
 void loop() {
 
-	ballast_adjust();
-	dive_plane_adjust(); 
+	//when in static trim don't auto adjust ballast position - static trim will handle this directly
+	if (fsm_state != STATIC_TRIM) { ballast_adjust(); }
+
+	//dive_plane_adjust(); 
 	int intStateTimeElapsed = millis() - intStateTimerStart;
 	if (intStateTimeElapsed > 1000 ) {
 
-		//&& fsm_state != REMOTE
+		if (fsm_state == STATIC_TRIM) {
 
-		//refresh IMU data
-		read_imu();
+			//don't log to sd and return minimal data
+			subSystemState_t systemState;
+			systemState.logTime = get_rtc_time();
+			systemState.FSMState = get_system_state();
+			systemState.leak[0] = fwd_leak_check();
+			systemState.leak[1] = aft_leak_check();
 
-		//create the state object
-		subSystemState_t systemState;
-		systemState.logTime = get_rtc_time();
-		systemState.FSMState = get_system_state();
-		systemState.leak[0] = fwd_leak_check();
-		systemState.leak[1] = aft_leak_check();
-		systemState.depth = get_depth();
-		systemState.balPos[0] = read_fwd_ballast_pos();
-		systemState.balPos[1] = read_aft_ballast_pos();
-		systemState.balMotorTemp[0] = read_fwd_temp();
-		systemState.balMotorTemp[1] = read_aft_temp();
-		systemState.balMotorSpeed[0] = get_fwd_ballast_motor_speed();
-		systemState.balMotorSpeed[1] = get_aft_ballast_motor_speed();
-		systemState.attitude[0] = get_cached_heading();
-		systemState.attitude[1] = get_cached_pitch();
-		systemState.attitude[2] = get_cached_roll();
-		systemState.acceleration[0] = get_imuacceleration_x();
-		systemState.acceleration[1] = get_imuacceleration_y();
-		systemState.acceleration[2] = get_imuacceleration_z();
-		systemState.internalTemp = read_imu_temp();
-		systemState.dpPos = get_diveplane_pot();
-		systemState.motorTh = get_main_motor_throttle();
-		systemState.mototRPM = read_rpm();
-		systemState.motorVolt = get_bus_voltage();
-		systemState.motorCurr = get_current_mA();
+			String dataString = "{";
+			dataString += "13|" + get_rtc_time() + ",";
+			dataString += "4|" + get_system_state() + ",";
+			dataString += "2|" + String(fwd_leak_check()) + ",";
+			dataString += "3|" + String(aft_leak_check()) + ",";
+			dataString += "35|" + String(millis()) + "}";
 
-		//log to sdcard and retrieve the logged string
-		String strLogLine = sdcard_logState(&systemState, LOG_ATTITUDE + LOG_ACCELERATION + LOG_BALLAST + LOG_DEPTH + LOG_SURFACES + LOG_MOTOR);
+			send_rf_comm(dataString);
+		}
+		else {
 
-		send_rf_comm(strLogLine);
+			//refresh IMU data
+			read_imu();
+
+			//create the state object
+			subSystemState_t systemState;
+			systemState.logTime = get_rtc_time();
+			systemState.FSMState = get_system_state();
+			systemState.leak[0] = fwd_leak_check();
+			systemState.leak[1] = aft_leak_check();
+			systemState.depth = get_depth();
+			systemState.balPos[0] = read_fwd_ballast_pos();
+			systemState.balPos[1] = read_aft_ballast_pos();
+			systemState.balMotorTemp[0] = read_fwd_temp();
+			systemState.balMotorTemp[1] = read_aft_temp();
+			systemState.balMotorSpeed[0] = get_fwd_ballast_motor_speed();
+			systemState.balMotorSpeed[1] = get_aft_ballast_motor_speed();
+			systemState.attitude[0] = get_cached_heading();
+			systemState.attitude[1] = get_cached_pitch();
+			systemState.attitude[2] = get_cached_roll();
+			systemState.acceleration[0] = get_imuacceleration_x();
+			systemState.acceleration[1] = get_imuacceleration_y();
+			systemState.acceleration[2] = get_imuacceleration_z();
+			systemState.internalTemp = read_imu_temp();
+			systemState.dpPos = get_diveplane_pot();
+			systemState.motorTh = get_main_motor_throttle();
+			systemState.mototRPM = read_rpm();
+			systemState.motorVolt = get_bus_voltage();
+			systemState.motorCurr = get_current_mA();
+
+			//log to sdcard and retrieve the logged string
+			String strLogLine = sdcard_logState(&systemState, LOG_ATTITUDE + LOG_ACCELERATION + LOG_BALLAST + LOG_DEPTH + LOG_SURFACES + LOG_MOTOR);
+
+			send_rf_comm(strLogLine);
+		}
+
+		
 
 		//reset timer
 		intStateTimerStart = millis();
@@ -224,8 +247,11 @@ void loop() {
 		break;
 	case REMOTE:
 
+
 		//this checks for a manual command from RF remote and applies it
 		apply_manual_command();
+
+		
 		
 		clear_rf_command();
 

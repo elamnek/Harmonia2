@@ -12,9 +12,14 @@
 #define BALLAST_MAX 1600
 #define BALLAST_MIN 0
 
+#define BALLAST_MAX_SAFETY 1550
+#define BALLAST_MIN_SAFETY 50
+
 void ballast_init();
 
 void ballast_adjust();
+
+void set_ballast_speeds(int intFwdSpeed, int intAftSpeed);
 
 boolean ballast_setpoints(double fwdSetpoint, double aftSetpoint);
 

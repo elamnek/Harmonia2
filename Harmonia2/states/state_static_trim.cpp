@@ -34,13 +34,15 @@ void init_static_trim(String strRemoteParam) {
 	KpTrm = get_sep_part_dbl(strRemoteParam, '|', 5);
 	KiTrm = get_sep_part_dbl(strRemoteParam, '|', 6);
 	KdTrm = get_sep_part_dbl(strRemoteParam, '|', 7);
+	double limitmin = get_sep_part_dbl(strRemoteParam, '|', 8);
+	double limitmax = get_sep_part_dbl(strRemoteParam, '|', 9);
 
 	
 	/*dveSetpoint = dblDepthSetpoint;
 	trmSetpoint = dblTrimSetpoint;*/
 	
-	dvePID.SetOutputLimits(-500, 500);
-	trmPID.SetOutputLimits(-200, 200);
+	dvePID.SetOutputLimits(limitmin, limitmax);
+	trmPID.SetOutputLimits(limitmin, limitmax);
 
 	//turn the PID on
 	dvePID.SetMode(AUTOMATIC);
@@ -57,23 +59,25 @@ void adjust_trim() {
 	dveInput = get_depth();
 	dvePID.Compute();
 	
-	trmInput = -read_imu_pitch();
+	trmInput = 0; //-read_imu_pitch();
 	trmPID.Compute();
 
-	//calc new ballast setpoints
+	//use output to control ballast motors directly
+	set_ballast_speeds(dveOutput * 800, -dveOutput * 800);
 
+
+	/*Serial.println(String(trmSetpoint) + "," + String(dveSetpoint));
 	Serial.println(String(trmInput) + "," + String(trmOutput) + "," + String(dveOutput));
-	Serial.println(String(KpDve) + "," + String(KpTrm));
+	Serial.println(String(KpDve) + "," + String(KpTrm));*/
 
-	double fwdSetpoint = max(min(dblPrevFwdSetpoint + (dveOutput + trmOutput) / 2, BALLAST_MAX), BALLAST_MIN);
+	//calc new ballast setpoints
+	/*double fwdSetpoint = max(min(dblPrevFwdSetpoint + (dveOutput + trmOutput) / 2, BALLAST_MAX), BALLAST_MIN);
 	double aftSetpoint = max(min(dblPrevAftSetpoint + (dveOutput - trmOutput) / 2, BALLAST_MAX), BALLAST_MIN);
-
-	/*double fwdSetpoint = dblPrevFwdSetpoint + ((dveOutput + trmOutput)/2);
-	double aftSetpoint = dblPrevAftSetpoint + ((dveOutput - trmOutput)/2);*/
-
 	ballast_setpoints(fwdSetpoint, aftSetpoint);
-	
 	dblPrevFwdSetpoint = fwdSetpoint;
 	dblPrevAftSetpoint = aftSetpoint;
+	*/
+
+	
 
 }

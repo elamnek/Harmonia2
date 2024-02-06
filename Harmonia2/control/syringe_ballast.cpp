@@ -160,6 +160,42 @@ void ballast_adjust() {
 	
 }
 
+void set_ballast_speeds(int intFwdSpeed, int intAftSpeed) {
+
+	//check ballast encoder positions are within limits - this will ensure no motor burnout
+	int32_t fwdBallastPos = readBallastPos(fwdBalAddr);
+	int32_t aftBallastPos = readBallastPos(aftBalAddr);
+
+	//negative speed pushes plunger in
+	//positive speed pulls plunger out
+
+	//fwd case
+	if (fwdBallastPos > BALLAST_MAX_SAFETY && intFwdSpeed > 0) {
+		m_ballastMC.setSpeed(fwdBalMC,0);//approaching max plunger out position - kill motor
+	}
+	else if (fwdBallastPos < BALLAST_MIN_SAFETY && intFwdSpeed < 0) {
+		m_ballastMC.setSpeed(fwdBalMC, 0);//approaching max plunger in position - kill motor
+	}
+	else {
+		//ok to set fwd speed
+		m_ballastMC.setSpeed(fwdBalMC, intFwdSpeed);
+	}
+
+	//aft case
+	if (aftBallastPos > BALLAST_MAX_SAFETY && intAftSpeed > 0) {
+		m_ballastMC.setSpeed(aftBalMC, 0);//approaching max plunger out position - kill motor
+	}
+	else if (aftBallastPos < BALLAST_MIN_SAFETY && intAftSpeed < 0) {
+		m_ballastMC.setSpeed(aftBalMC, 0);//approaching max plunger in position - kill motor
+	}
+	else {
+		//ok to set aft speed
+		m_ballastMC.setSpeed(aftBalMC, intAftSpeed);
+	}
+	
+	
+}
+
 boolean ballast_setpoints(double fwdSetpoint, double aftSetpoint) {
 	
 	//make sure setpoints are within allowable limits
